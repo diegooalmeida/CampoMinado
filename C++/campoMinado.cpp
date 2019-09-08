@@ -15,11 +15,34 @@
 
 using namespace std;
 
-// Variaveis globais, precisa ser criado 2 para as matrizes de tam indefinido 
+/*
+	Devido a impossibilidade de passarmos uma matriz com tamanho definido em tempo de execucao para uma funcao
+	em C++, vamos simular uma matriz usando um vetor.
 
-bool ehBomba = false;
-int tam;
-int quantidade_bombas; 
+	Dessa forma, em vez de criamos ma matriz como:
+
+		matriz[linhas][colunas];
+
+	Criaremos:
+
+		vetor[linhas * colunas];
+
+	E em vez de acessarmos a posiçao como:
+
+		matriz[i][j];
+
+	Acessaremos usando:
+
+		vetor[i*linhas + j];
+
+	Isso facilitará o entendimento do codigo pois aumentara o encapsulamento do mesmo.
+*/
+
+// Variaveis globais
+
+int linhas, colunas;
+int bombas; 
+
 clock_t tInicio, Tfim; 
 double tDecorrido;
 
@@ -33,78 +56,161 @@ void tempoFim();
 // Apresentacao inicial
 void apresentacao() {
 	cout << endl;
-	cout << "██████╗ ███████╗███╗   ███╗    ██╗   ██╗██╗███╗   ██╗██████╗  ██████╗ "<< endl;
-	cout << "██╔══██╗██╔════╝████╗ ████║    ██║   ██║██║████╗  ██║██╔══██╗██╔═══██╗"<< endl;
-	cout << "██████╔╝█████╗  ██╔████╔██║    ██║   ██║██║██╔██╗ ██║██║  ██║██║   ██║"<< endl;
-	cout << "██╔══██╗██╔══╝  ██║╚██╔╝██║    ╚██╗ ██╔╝██║██║╚██╗██║██║  ██║██║   ██║"<< endl;
-	cout << "██████╔╝███████╗██║ ╚═╝ ██║     ╚████╔╝ ██║██║ ╚████║██████╔╝╚██████╔╝"<< endl;
-	cout << "╚═════╝ ╚══════╝╚═╝     ╚═╝      ╚═══╝  ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝ "<< endl;
+	cout << "██████╗ ███████╗███╗   ███╗    ██╗   ██╗██╗███╗   ██╗██████╗  ██████╗ " << endl;
+	cout << "██╔══██╗██╔════╝████╗ ████║    ██║   ██║██║████╗  ██║██╔══██╗██╔═══██╗" << endl;
+	cout << "██████╔╝█████╗  ██╔████╔██║    ██║   ██║██║██╔██╗ ██║██║  ██║██║   ██║" << endl;
+	cout << "██╔══██╗██╔══╝  ██║╚██╔╝██║    ╚██╗ ██╔╝██║██║╚██╗██║██║  ██║██║   ██║" << endl;
+	cout << "██████╔╝███████╗██║ ╚═╝ ██║     ╚████╔╝ ██║██║ ╚████║██████╔╝╚██████╔╝" << endl;
+	cout << "╚═════╝ ╚══════╝╚═╝     ╚═╝      ╚═══╝  ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝ " << endl;
 }
 
-/* Perdeu o jogo
+// Perdeu o jogo
 void perdeu(){
-    cout << end1;
-    cout << "██╗   ██╗ ██████╗  ██████╗███████╗    ██████╗ ███████╗██████╗ ██████╗ ███████╗██╗   ██╗██╗ " << end1;
-    cout << "██║   ██║██╔═══██╗██╔════╝██╔════╝    ██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔════╝██║   ██║██║ " << end1; 
-    cout << "██║   ██║██║   ██║██║     █████╗      ██████╔╝█████╗  ██████╔╝██║  ██║█████╗  ██║   ██║██║ " << end1;
-    cout << "╚██╗ ██╔╝██║   ██║██║     ██╔══╝      ██╔═══╝ ██╔══╝  ██╔══██╗██║  ██║██╔══╝  ██║   ██║╚═╝ " << end1;
-    cout << " ╚████╔╝ ╚██████╔╝╚██████╗███████╗    ██║     ███████╗██║  ██║██████╔╝███████╗╚██████╔╝██╗ " << end1;
-    cout << "  ╚═══╝   ╚═════╝  ╚═════╝╚══════╝    ╚═╝     ╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝ ╚═╝ " << end1;
-	cout << end1 << end1;
+    cout << endl;
+    cout << "██╗   ██╗ ██████╗  ██████╗███████╗    ██████╗ ███████╗██████╗ ██████╗ ███████╗██╗   ██╗██╗ " << endl;
+    cout << "██║   ██║██╔═══██╗██╔════╝██╔════╝    ██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔════╝██║   ██║██║ " << endl; 
+    cout << "██║   ██║██║   ██║██║     █████╗      ██████╔╝█████╗  ██████╔╝██║  ██║█████╗  ██║   ██║██║ " << endl;
+    cout << "╚██╗ ██╔╝██║   ██║██║     ██╔══╝      ██╔═══╝ ██╔══╝  ██╔══██╗██║  ██║██╔══╝  ██║   ██║╚═╝ " << endl;
+    cout << " ╚████╔╝ ╚██████╔╝╚██████╗███████╗    ██║     ███████╗██║  ██║██████╔╝███████╗╚██████╔╝██╗ " << endl;
+    cout << "  ╚═══╝   ╚═════╝  ╚═════╝╚══════╝    ╚═╝     ╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝ ╚═╝ " << endl;
+	cout << endl << endl;
 }
 
 // Ganhou o jogo
 void ganhou(){
-    cout << end1;
-    cout << "██╗   ██╗ ██████╗  ██████╗███████╗    ██╗   ██╗███████╗███╗   ██╗ ██████╗███████╗██╗   ██╗██╗██╗██╗██╗██╗██╗██╗██╗" << end1;
-    cout << "██║   ██║██╔═══██╗██╔════╝██╔════╝    ██║   ██║██╔════╝████╗  ██║██╔════╝██╔════╝██║   ██║██║██║██║██║██║██║██║██║" << end1;
-    cout << "██║   ██║██║   ██║██║     █████╗      ██║   ██║█████╗  ██╔██╗ ██║██║     █████╗  ██║   ██║██║██║██║██║██║██║██║██║" << end1;
-    cout << "╚██╗ ██╔╝██║   ██║██║     ██╔══╝      ╚██╗ ██╔╝██╔══╝  ██║╚██╗██║██║     ██╔══╝  ██║   ██║╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝" << end1;
-    cout << " ╚████╔╝ ╚██████╔╝╚██████╗███████╗     ╚████╔╝ ███████╗██║ ╚████║╚██████╗███████╗╚██████╔╝██╗██╗██╗██╗██╗██╗██╗██╗" << end1;
-    cout << "  ╚═══╝   ╚═════╝  ╚═════╝╚══════╝      ╚═══╝  ╚══════╝╚═╝  ╚═══╝ ╚═════╝╚══════╝ ╚═════╝ ╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝" << end1;
-	cout << end1 << end1;
-} */
+    cout << endl;
+    cout << "██╗   ██╗ ██████╗  ██████╗███████╗    ██╗   ██╗███████╗███╗   ██╗ ██████╗███████╗██╗   ██╗██╗██╗██╗██╗██╗██╗██╗██╗" << endl;
+    cout << "██║   ██║██╔═══██╗██╔════╝██╔════╝    ██║   ██║██╔════╝████╗  ██║██╔════╝██╔════╝██║   ██║██║██║██║██║██║██║██║██║" << endl;
+    cout << "██║   ██║██║   ██║██║     █████╗      ██║   ██║█████╗  ██╔██╗ ██║██║     █████╗  ██║   ██║██║██║██║██║██║██║██║██║" << endl;
+    cout << "╚██╗ ██╔╝██║   ██║██║     ██╔══╝      ╚██╗ ██╔╝██╔══╝  ██║╚██╗██║██║     ██╔══╝  ██║   ██║╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝" << endl;
+    cout << " ╚████╔╝ ╚██████╔╝╚██████╗███████╗     ╚████╔╝ ███████╗██║ ╚████║╚██████╗███████╗╚██████╔╝██╗██╗██╗██╗██╗██╗██╗██╗" << endl;
+    cout << "  ╚═══╝   ╚═════╝  ╚═════╝╚══════╝      ╚═══╝  ╚══════╝╚═╝  ╚═══╝ ╚═════╝╚══════╝ ╚═════╝ ╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝" << endl;
+	cout << endl << endl;
+}
 
 // Tela de créditos
 void creditos(){
-		puts("");
-		puts("|-----------------------------------------------------------------------------|");
-		puts("|                            PLP 2019.2                                       |");
-		puts("|                              Everton                                        |");
-		puts("|                                                                             |");
-		puts("|                               Grupo                                         |");
-		puts("|                            Diego Ribeiro                                    |");
-		puts("|                             Iago Tito                                       |");
-		puts("|                            Paulo Mateus                                     |");
-		puts("|                            Raiany Rufino                                    |");
-		puts("|-----------------------------------------------------------------------------|");
+		cout << "" << endl;
+		cout << "|-----------------------------------------------------------------------------|" << endl;
+		cout << "|                            PLP 2019.2                                       |" << endl;
+		cout << "|                              Everton                                        |" << endl;
+		cout << "|                                                                             |" << endl;
+		cout << "|                               Grupo                                         |" << endl;
+		cout << "|                            Diego Ribeiro                                    |" << endl;
+		cout << "|                             Iago Tito                                       |" << endl;
+		cout << "|                            Paulo Mateus                                     |" << endl;
+		cout << "|                            Raiany Rufino                                    |" << endl;
+		cout << "|-----------------------------------------------------------------------------|" << endl;
 }
 
 // Menu do Jogo
 void menu(){
-		puts("");
-		puts("|-----------------------------------------------------------------------------|");
-		puts("|                                 Menu                                        |");
-		puts("|                           (1) Iniciar Jogo                                  |");
-		puts("|                           (2) Créditos                                      |");
-		puts("|                           (3) Sair do Jogo                                   |");
-		puts("|-----------------------------------------------------------------------------|");
+		cout << "" << endl;
+		cout << "|-----------------------------------------------------------------------------|" << endl;
+		cout << "|                                 Menu                                        |" << endl;
+		cout << "|                           (1) Iniciar Jogo                                  |" << endl;
+		cout << "|                           (2) Créditos                                      |" << endl;
+		cout << "|                           (3) Sair do Jogo                                  |" << endl;
+		cout << "|-----------------------------------------------------------------------------|" << endl;
+		cout << endl << endl;
+}
+
+
+// Pede o tamanho do campo e o número de bombas ao usuario
+void dados_iniciais () {
+	while (true) {
+		printf("Informe o tamanho M N da matriz e o numero X de bombas com:\n");
+		printf("9 <= M <= 16  ,  9 <= N <= 30  e  10 <= x <= 99\n");
+		printf("Sugerimos: 16 16 40\n");
+		cout << endl;
+
+		cout << "Sua opcao: ";
+		scanf("%i %i %i", &linhas, &colunas, &bombas);
+
+		printf("\n\n");
+
+		if (linhas < 9 || linhas > 16 || colunas < 9 || colunas > 30 || bombas < 10 || bombas > 99)
+			printf("Valores inválidos, tente novamente.");
+		else
+			break;
+	}
+}
+
+void gera_campo_usuario (char campo_usuario[]) {
+	for (int i = 0; i < linhas; i++) {
+		for (int j = 0; j < colunas; j++) {
+			campo_usuario[i*linhas + j] = '+';
+		}
+	}
+}
+void imprime_campo (char campo[]) {
+
+	cout << endl << endl;
+	// Imprime a legenda de numeros superior
+	cout << "       0";
+	for (int c = 1; c < colunas; c++) {
+		if (c < 10)
+			cout << "  " <<  c;
+		else
+			cout << " " << c;
+	}
+	cout << endl;
+
+	// Imprime a linha superior
+	cout << "       -";
+	for (int c = 0; c < colunas-1; c++) {
+		cout << "  -";
+	}
+	cout << endl;
+
+	// Imprime a matriz
+	for (int i = 0; i < linhas; i++) {
+		cout << "  " << (char)(i+65) << " | "; // Imprime as letras da linha e uma linha separadora no lado esquerdo
+		for (int j = 0; j < colunas; j++) {
+			cout << " " << campo[i*linhas + j] << " ";
+		}
+		cout <<" | " << (char)(i+65); // Imprime as letras da linha e uma linha separadora no lado direito
+		cout << endl;
+	}
+
+	// Imprime a linha inferior
+	cout << "       -";
+	for (int c = 0; c < colunas-1; c++) {
+		cout << "  -";
+	}
+	cout << endl;
+
+	// Imprime a legenda de numeros inferior
+	cout << "       0";
+	for (int c = 1; c < colunas; c++) {
+		if (c < 10)
+			cout << "  " <<  c;
+		else
+			cout << " " << c;
+	}
+
+	cout << endl << endl;
 }
 
 int iniciaJogo(){
-	int x, y; // coordenadas 
-	int tamanho_matriz;
-				
-	printf("Informe o tamanho N da matriz respeitando o intervalo  9 <= N <= 30.\n");
-	scanf("%i", &tamanho_matriz);
 	
-	tam = tamanho_matriz;
-	quantidade_bombas = tam - 1;
-	int campo_minado[tam][tam]; // matriz completa do sistema
-	int campo_minado_usuario[tam][tam]; // matriz que sera exibida 
+	dados_iniciais(); // pede o tamanho do campo e o número de bombas ao usuario
 	
-	//geraBombas();
-	
+	char campo_usuario[linhas * colunas];
+	char campo_interno[linhas * colunas];
+
+	gera_campo_usuario (campo_usuario);
+	imprime_campo(campo_usuario);
+
+	// TODO:
+	/*
+		Agora precisamos pegar a primeira jogada do usuario e depois gerar o campo interno, para que a primeira jogada
+		não tenha uma bomba
+	*/
+
+
+	// TODO: ajustar pra tamanho mxn
+	/*
 	if(tam >= 9 && tam <= 30) {
 		tempoInicio();
 		while(!ehBomba){ // While nao achou bomba e não ganhou, falta fazer o metodo para ganhou()
@@ -137,11 +243,9 @@ int iniciaJogo(){
 		}
 		// imprimir o campo minado do sistema para depois exibir os creditos
 		creditos();
+		*/
 
 		return 0;
-	} else {
-		puts("Tamanho informado inválido.");
-	}
 }
 
 
@@ -180,24 +284,26 @@ int main(){
 	 	
 	// Menu do jogo
 	
-	menu();
-	scanf("%i", &escolha);
-	
-	switch(escolha){
-		case 1:
-			iniciaJogo();
-		break;
+	while (true) {
+		menu();
+		cin >> escolha;
 		
-		case 2:
-			creditos();
-		break;
-		
-		case 3:
-			exit(0);
-		break;
-		
-		default:
-			printf("Não existe opção para sua escolha");
-		break;
+		switch(escolha){
+			case 1:
+				iniciaJogo();
+			break;
+			
+			case 2:
+				creditos();
+			break;
+			
+			case 3:
+				exit(0);
+			break;
+			
+			default:
+				printf("Não existe opção para sua escolha");
+			break;
+		}
 	}
 }
