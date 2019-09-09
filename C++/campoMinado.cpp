@@ -41,7 +41,7 @@ using namespace std;
 // Variaveis globais
 
 int linhas, colunas;
-int bombas; 
+int bombas;
 
 clock_t tInicio, Tfim; 
 double tDecorrido;
@@ -147,8 +147,8 @@ void imprime_campo (char campo[]) {
 
 	cout << endl << endl;
 	// Imprime a legenda de numeros superior
-	cout << "       0";
-	for (int c = 1; c < colunas; c++) {
+	cout << "       1";
+	for (int c = 2; c < colunas+1; c++) {
 		if (c < 10)
 			cout << "  " <<  c;
 		else
@@ -181,8 +181,8 @@ void imprime_campo (char campo[]) {
 	cout << endl;
 
 	// Imprime a legenda de numeros inferior
-	cout << "       0";
-	for (int c = 1; c < colunas; c++) {
+	cout << "       1";
+	for (int c = 2; c < colunas+1; c++) {
 		if (c < 10)
 			cout << "  " <<  c;
 		else
@@ -190,6 +190,176 @@ void imprime_campo (char campo[]) {
 	}
 
 	cout << endl << endl;
+}
+
+int x, y;
+char m;
+
+void pega_jogada () {
+	while (true) {
+		cout << "Informe sua jogada" << endl;
+		char a;
+		cin >> m >> a >> y;
+
+		x = ((int) a) - 65; // x será lido como um char. Vamos converter de char pra um int para trabalhar
+							// com indices no array.
+		y--; // y será lido do usuario como a posição real no array+1, logo, corrigimos com esse --;
+
+		if (m != 'R' && m != 'F' && m != '?')
+			cout << "Jogada invalida." << endl;
+		else if (x < 1 || x > linhas) 
+			cout << "Linha inválida." << endl;
+		else if (y < 1 || y > colunas)
+			cout << "Coluna inválida" << endl;
+		else 
+			break;
+	}
+}
+
+void gera_bombas (char campo_interno[]) {
+	int counter = 0;
+	int b;
+	while (counter < bombas) {
+		b = rand() % (linhas * colunas);
+		cout << b << endl;
+		if (campo_interno[b] != '0' && campo_interno[b] != 'B') {
+			campo_interno[b] = 'B';
+			counter++;
+			cout << "contador: " << counter << endl;
+		}
+	}
+}
+
+void soma_um (char campo_interno[], int p) {
+	if (campo_interno[p] = '0') {
+		campo_interno[p] = '1';
+	} else if (campo_interno[p] = '1') {
+		campo_interno[p] = '2';
+	} else if (campo_interno[p] = '2') {
+		campo_interno[p] = '3';
+	}
+	else if (campo_interno[p] = '3') {
+		campo_interno[p] = '4';
+	}
+	else if (campo_interno[p] = '4') {
+		campo_interno[p] = '5';
+	}
+	else if (campo_interno[p] = '5') {
+		campo_interno[p] = '6';
+	}
+	else if (campo_interno[p] = '6') {
+		campo_interno[p] = '7';
+	}
+	else if (campo_interno[p] = '7') {
+		campo_interno[p] = '8';
+	}
+
+}
+
+void preenche_ao_redor (char campo_interno[], int i, int j) {
+	// Quando o quadrado a ser revelado está "no meio" do tabuleiro
+	if (i-1 >= 0 && i+1 < linhas && j-1 >= 0 && j+1 < colunas) {
+		
+		soma_um(campo_interno, (i-1)*linhas + (j-1));
+		soma_um(campo_interno, (i-1)*linhas + (j));
+		soma_um(campo_interno, (i-1)*linhas + (j+1));
+		soma_um(campo_interno, (i)*linhas + (j-1));
+		//	
+		soma_um(campo_interno, (i)*linhas + (j+1));
+		soma_um(campo_interno, (i+1)*linhas + (j-1));
+		soma_um(campo_interno, (i+1)*linhas + (j));
+		soma_um(campo_interno, (i+1)*linhas + (j+1));
+
+	// Quando o quadrado está no canto superior esquerdo
+	} else if (i-1 < 0 && j-1 < 0) {
+		//	
+		soma_um(campo_interno, (i)*linhas + (j+1));
+		soma_um(campo_interno, (i+1)*linhas + (j));
+		soma_um(campo_interno, (i+1)*linhas + (j+1));
+	
+	// Quando o quadrado está "no meio" na parte superior
+	} else if (i-1 < 0 && j-1 >= 0 && j+1 < colunas) {
+		soma_um(campo_interno, (i)*linhas + (j-1));
+		//	
+		soma_um(campo_interno, (i)*linhas + (j+1));
+		soma_um(campo_interno, (i+1)*linhas + (j-1));
+		soma_um(campo_interno, (i+1)*linhas + (j));
+		soma_um(campo_interno, (i+1)*linhas + (j+1));
+
+	// O quadrado está no canto superior direito
+	} else if (i-1 < 0 && j+1 >= colunas) {
+		soma_um(campo_interno, (i)*linhas + (j-1));
+		//	
+		soma_um(campo_interno, (i+1)*linhas + (j-1));
+		soma_um(campo_interno, (i+1)*linhas + (j));
+
+	// O quadrado está "no meio" na lateral esquerda
+	} else if (i-1 >= 0 && i+1 < linhas && j-1 < 0) {
+		soma_um(campo_interno, (i-1)*linhas + (j));
+		soma_um(campo_interno, (i-1)*linhas + (j+1));
+		//	
+		soma_um(campo_interno, (i)*linhas + (j+1));
+		soma_um(campo_interno, (i+1)*linhas + (j));
+		soma_um(campo_interno, (i+1)*linhas + (j+1));
+
+	// O quadrado está "no meio" na lateral direita
+	} else if (i-1 >= 0 && i+1 < linhas && j+1 >= colunas) {
+		soma_um(campo_interno, (i-1)*linhas + (j-1));
+		soma_um(campo_interno, (i-1)*linhas + (j));
+		soma_um(campo_interno, (i)*linhas + (j-1));
+		//	
+		soma_um(campo_interno, (i+1)*linhas + (j-1));
+		soma_um(campo_interno, (i+1)*linhas + (j));
+
+	// O quadrado está na parte inferior esquerda
+	} else if (i+1 >= linhas && j-1 < 0) {
+		soma_um(campo_interno, (i-1)*linhas + (j));
+		soma_um(campo_interno, (i-1)*linhas + (j+1));
+		//	
+		soma_um(campo_interno, (i)*linhas + (j+1));
+
+	// O quadrado está "no meio" da parte inferior
+	} else if (i+1 >= linhas && j-1 >= 0 && j+1 < colunas) {
+		soma_um(campo_interno, (i-1)*linhas + (j-1));
+		soma_um(campo_interno, (i-1)*linhas + (j));
+		soma_um(campo_interno, (i-1)*linhas + (j+1));
+		soma_um(campo_interno, (i)*linhas + (j-1));
+		//	
+		soma_um(campo_interno, (i)*linhas + (j+1));
+
+	// O quadrado está na parte inferior direita
+	} else {
+		soma_um(campo_interno, (i-1)*linhas + (j-1));
+		soma_um(campo_interno, (i-1)*linhas + (j));
+		soma_um(campo_interno, (i)*linhas + (j-1));
+		//
+	}
+
+}
+
+void preenche_campo_interno(char campo_interno[]) {
+	for (int c = 0; c < linhas*colunas; c++) {
+		if (campo_interno[c] != 'B')
+			campo_interno[c] = '0';
+	}
+	for (int i = 0; i < linhas; i++) {
+		for (int j = 0; j < colunas; j++) {
+			if (campo_interno[i*linhas + j] == 'B') {
+				preenche_ao_redor(campo_interno, i, j);
+			}
+		}
+	}
+}
+
+void primeira_jogada (char campo_usuario[], char campo_interno[]) {
+
+	
+	campo_usuario[x*linhas + y] = '0';
+	campo_interno[x*linhas + y] = '0';
+	gera_bombas(campo_interno);
+	//preenche_campo_interno(campo_interno);
+	cout << "Campo interno:" << endl;
+	imprime_campo(campo_interno);
 }
 
 int iniciaJogo(){
@@ -200,7 +370,19 @@ int iniciaJogo(){
 	char campo_interno[linhas * colunas];
 
 	gera_campo_usuario (campo_usuario);
+	
+	pega_jogada(); // Pega o tipo e a posição da jogada na matriz
+	primeira_jogada(campo_usuario, campo_interno); // Realzia a primeira jogada, revelando a posição no campo do usuario
+								// e depois dispondo as bombas no campo interno
 	imprime_campo(campo_usuario);
+	while (true) {
+		pega_jogada(); // Pega o tipo e a posição da jogada na matriz
+		}
+	}
+
+
+
+	// imprime_campo(campo_usuario);
 
 	// TODO:
 	/*
@@ -244,21 +426,6 @@ int iniciaJogo(){
 		// imprimir o campo minado do sistema para depois exibir os creditos
 		creditos();
 		*/
-
-		return 0;
-}
-
-
-/*void geraBombas(){
-    int i;
-    int j;
-    srand(time(NULL)); // responsavel por alimentar a rand
-    for(int k=0; k<=quantidade_bombas; k++){
-        i = rand() % tam;
-        j = rand() % tam;
-        campo_minado[i][j] = 'B';
-    }
-}*/
 
 void tempoInicio(){
 	//iniciando a contagem do tempo
