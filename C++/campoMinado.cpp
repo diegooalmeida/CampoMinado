@@ -1,18 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <locale.h>
-#include <math.h>
-#include <vector>
-#include <map>
-#include <string>
-#include <ctime>
-#include <fstream>
-#include <iterator>
-#include <algorithm>
 #include <iostream>
-#include <cstdio>
-#include <cstdlib>
-
 using namespace std;
 
 /*
@@ -38,21 +24,8 @@ using namespace std;
 	Isso facilitará o entendimento do codigo pois aumentara o encapsulamento do mesmo.
 */
 
-// Variaveis globais
 
-int linhas, colunas;
-int bombas;
-
-clock_t tInicio, Tfim; 
-double tDecorrido;
-
-//prototipo das funções
-void tempoInicio();
-void tempoFim();
-
-
-/* Design do Jogo (colocar isso em outra classe) */ 
-
+// -=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=- Layouts -=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=- //
 // Apresentacao inicial
 void apresentacao() {
 	cout << endl;
@@ -63,7 +36,6 @@ void apresentacao() {
 	cout << "██████╔╝███████╗██║ ╚═╝ ██║     ╚████╔╝ ██║██║ ╚████║██████╔╝╚██████╔╝" << endl;
 	cout << "╚═════╝ ╚══════╝╚═╝     ╚═╝      ╚═══╝  ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝ " << endl;
 }
-
 // Perdeu o jogo
 void perdeu(){
     cout << endl;
@@ -75,7 +47,6 @@ void perdeu(){
     cout << "  ╚═══╝   ╚═════╝  ╚═════╝╚══════╝    ╚═╝     ╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝ ╚═════╝ ╚═╝ " << endl;
 	cout << endl << endl;
 }
-
 // Ganhou o jogo
 void ganhou(){
     cout << endl;
@@ -87,23 +58,7 @@ void ganhou(){
     cout << "  ╚═══╝   ╚═════╝  ╚═════╝╚══════╝      ╚═══╝  ╚══════╝╚═╝  ╚═══╝ ╚═════╝╚══════╝ ╚═════╝ ╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝╚═╝" << endl;
 	cout << endl << endl;
 }
-
-// Tela de créditos
-void creditos(){
-		cout << "" << endl;
-		cout << "|-----------------------------------------------------------------------------|" << endl;
-		cout << "|                            PLP 2019.2                                       |" << endl;
-		cout << "|                              Everton                                        |" << endl;
-		cout << "|                                                                             |" << endl;
-		cout << "|                               Grupo                                         |" << endl;
-		cout << "|                            Diego Ribeiro                                    |" << endl;
-		cout << "|                             Iago Tito                                       |" << endl;
-		cout << "|                            Paulo Mateus                                     |" << endl;
-		cout << "|                            Raiany Rufino                                    |" << endl;
-		cout << "|-----------------------------------------------------------------------------|" << endl;
-}
-
-// Menu do Jogo
+// Menu do jogo
 void menu(){
 		cout << "" << endl;
 		cout << "|-----------------------------------------------------------------------------|" << endl;
@@ -114,35 +69,56 @@ void menu(){
 		cout << "|-----------------------------------------------------------------------------|" << endl;
 		cout << endl << endl;
 }
+// Tela de créditos
+// TODO: Pegar o sobrenome de Everton
+void creditos(){
+		cout << "" << endl;
+		cout << "|-----------------------------------------------------------------------------|" << endl;
+		cout << "|                             PLP 2019.2                                      |" << endl;
+		cout << "|                              Everton                                        |" << endl;
+		cout << "|                                                                             |" << endl;
+		cout << "|                               Grupo:                                        |" << endl;
+		cout << "|                            Diego Ribeiro                                    |" << endl;
+		cout << "|                             Iago Tito                                       |" << endl;
+		cout << "|                            Paulo Mateus                                     |" << endl;
+		cout << "|                            Raiany Rufino                                    |" << endl;
+		cout << "|-----------------------------------------------------------------------------|" << endl;
+}
+// -=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
 
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- Variaveis globais -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
+int linhas, colunas, bombas; // quantidade de cada uma dessas coisas no jogo
+int x, y; // posicao da jogada do jogador
+char m; // tipo de jogada do jogador: R - revelar, F - bandeira, ? - interrogacao
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
 
-// Pede o tamanho do campo e o número de bombas ao usuario
-void dados_iniciais () {
-	while (true) {
-		printf("Informe o tamanho M N da matriz e o numero X de bombas com:\n");
-		printf("9 <= M <= 16  ,  9 <= N <= 30  e  10 <= x <= 99\n");
-		printf("Sugerimos: 16 16 40\n");
+void coleta_dados_iniciais () {
+    while (true) {
+		cout << "Informe o tamanho M N da matriz e o numero X de bombas com:" << endl;
+		cout << "9 <= M <= 16  ,  9 <= N <= 30  e  10 <= x <= 99" << endl;
+		cout << "Sugerimos: 16 16 40" << endl;
 		cout << endl;
 
 		cout << "Sua opcao: ";
-		scanf("%i %i %i", &linhas, &colunas, &bombas);
+		cin >> linhas >> colunas >> bombas;
 
-		printf("\n\n");
+		cout << endl << endl;
 
 		if (linhas < 9 || linhas > 16 || colunas < 9 || colunas > 30 || bombas < 10 || bombas > 99)
-			printf("Valores inválidos, tente novamente.");
+			cout << "Valores inválidos, tente novamente." << endl;
 		else
 			break;
 	}
 }
 
-void gera_campo_usuario (char campo_usuario[]) {
+void preenche_campo(char campo[]) {
 	for (int i = 0; i < linhas; i++) {
 		for (int j = 0; j < colunas; j++) {
-			campo_usuario[i*linhas + j] = '+';
+			campo[i*linhas + j] = '+';
 		}
 	}
 }
+
 void imprime_campo (char campo[]) {
 
 	cout << endl << endl;
@@ -192,9 +168,6 @@ void imprime_campo (char campo[]) {
 	cout << endl << endl;
 }
 
-int x, y;
-char m;
-
 void pega_jogada () {
 	while (true) {
 		cout << "Informe sua jogada" << endl;
@@ -221,42 +194,42 @@ void gera_bombas (char campo_interno[]) {
 	int b;
 	while (counter < bombas) {
 		b = rand() % (linhas * colunas);
-		cout << b << endl;
-		if (campo_interno[b] != '0' && campo_interno[b] != 'B') {
+		if (campo_interno[b] == '+') {
 			campo_interno[b] = 'B';
 			counter++;
-			cout << "contador: " << counter << endl;
 		}
 	}
 }
 
+void preenche_campo_com_zeros (char campo_interno[]) {
+    for (int c = 0; c < linhas*colunas; c++) {
+        if (campo_interno[c] == '+')
+            campo_interno[c] = '0';
+    }
+}
+
 void soma_um (char campo_interno[], int p) {
-	if (campo_interno[p] = '0') {
+	if (campo_interno[p] == '0') {
 		campo_interno[p] = '1';
-	} else if (campo_interno[p] = '1') {
+	} else if (campo_interno[p] == '1') {
 		campo_interno[p] = '2';
-	} else if (campo_interno[p] = '2') {
+	} else if (campo_interno[p] == '2') {
 		campo_interno[p] = '3';
-	}
-	else if (campo_interno[p] = '3') {
+	} else if (campo_interno[p] == '3') {
 		campo_interno[p] = '4';
-	}
-	else if (campo_interno[p] = '4') {
+	} else if (campo_interno[p] == '4') {
 		campo_interno[p] = '5';
-	}
-	else if (campo_interno[p] = '5') {
+	} else if (campo_interno[p] == '5') {
 		campo_interno[p] = '6';
-	}
-	else if (campo_interno[p] = '6') {
+	} else if (campo_interno[p] == '6') {
 		campo_interno[p] = '7';
-	}
-	else if (campo_interno[p] = '7') {
+	} else if (campo_interno[p] == '7') {
 		campo_interno[p] = '8';
 	}
 
 }
 
-void preenche_ao_redor (char campo_interno[], int i, int j) {
+void calcula_arredores (char campo_interno[], int i, int j) {
 	// Quando o quadrado a ser revelado está "no meio" do tabuleiro
 	if (i-1 >= 0 && i+1 < linhas && j-1 >= 0 && j+1 < colunas) {
 		
@@ -337,114 +310,47 @@ void preenche_ao_redor (char campo_interno[], int i, int j) {
 
 }
 
-void preenche_campo_interno(char campo_interno[]) {
-	for (int c = 0; c < linhas*colunas; c++) {
-		if (campo_interno[c] != 'B')
-			campo_interno[c] = '0';
-	}
-	for (int i = 0; i < linhas; i++) {
-		for (int j = 0; j < colunas; j++) {
-			if (campo_interno[i*linhas + j] == 'B') {
-				preenche_ao_redor(campo_interno, i, j);
-			}
-		}
-	}
-}
+void primeira_jogada (char campo_interno[], char campo_usuario[]) {
 
-void primeira_jogada (char campo_usuario[], char campo_interno[]) {
-
-	
-	campo_usuario[x*linhas + y] = '0';
 	campo_interno[x*linhas + y] = '0';
-	gera_bombas(campo_interno);
-	//preenche_campo_interno(campo_interno);
-	cout << "Campo interno:" << endl;
-	imprime_campo(campo_interno);
-}
 
-int iniciaJogo(){
-	
-	dados_iniciais(); // pede o tamanho do campo e o número de bombas ao usuario
-	
-	char campo_usuario[linhas * colunas];
-	char campo_interno[linhas * colunas];
-
-	gera_campo_usuario (campo_usuario);
-	
-	pega_jogada(); // Pega o tipo e a posição da jogada na matriz
-	primeira_jogada(campo_usuario, campo_interno); // Realzia a primeira jogada, revelando a posição no campo do usuario
-								// e depois dispondo as bombas no campo interno
-	imprime_campo(campo_usuario);
-	while (true) {
-		pega_jogada(); // Pega o tipo e a posição da jogada na matriz
-		}
-	}
-
-
-
-	// imprime_campo(campo_usuario);
-
-	// TODO:
-	/*
-		Agora precisamos pegar a primeira jogada do usuario e depois gerar o campo interno, para que a primeira jogada
-		não tenha uma bomba
-	*/
-
-
-	// TODO: ajustar pra tamanho mxn
-	/*
-	if(tam >= 9 && tam <= 30) {
-		tempoInicio();
-		while(!ehBomba){ // While nao achou bomba e não ganhou, falta fazer o metodo para ganhou()
-			
-			// Trocar para digitar a coordenada em apenas uma linha, exemplo: 2A
-			printf("Digite o eixo x: ");
-			scanf("%d", &x);
-			printf("Digite o eixo y: ");
-			scanf("%d", &y);
-			if(x > 0 && x <= tam && y > 0 && y <= tam){
-				campo_minado_usuario[x-1][y-1] = campo_minado[x-1][y-1]; 
-				if(campo_minado_usuario[x-1][y-1] == 'B'){
-					ehBomba = true;
-				}
-				//imprimir o campo minado
-			   tempoFim();
-			   puts("Você ganhou");
-			}
-			else{
-				puts("Coordenadas informadas inválidas. Digite novamente.");
-			}
-		}
-		
-		if (ehBomba == true){
-			tempoFim();
-			puts("Você perdeu");
-		}else{  // troca por  else if ganhou, mas falta fazer o metodo para ganhou 
-			tempoFim();
-			puts("Você ganhou");
-		}
-		// imprimir o campo minado do sistema para depois exibir os creditos
-		creditos();
-		*/
-
-void tempoInicio(){
-	//iniciando a contagem do tempo
-    tInicio=clock();
-}
-
-void tempoFim(){
-    //terminando a contagem do tempo
-    Tfim=clock();
+    gera_bombas(campo_interno);
     
-    //calculando o tempo decorrido
-    tDecorrido=((double)(tInicio-Tfim)/CLOCKS_PER_SEC);
+    preenche_campo_com_zeros (campo_interno);
 
-    printf("Tempo gasto: %lf s\n", tDecorrido);
+    // calcula o valor de cada quadrado baseado em quantas bombas existem ao seu redor
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            if (campo_interno[i*linhas + j] == 'B')
+                calcula_arredores (campo_interno, i, j);
+        }
+    }
+
+    // poe o valor do quadrado do campo interno no campo do usuario (caso a primeira jogada tenha alguma bomba ao redor)
+    campo_usuario[x*linhas + y] = campo_interno[x*linhas + y];
+
 }
 
-int main(){
-    
-    setlocale (LC_ALL, "Portuguese");
+// TODO: metodo para revelar quadrados adjacentes
+
+void jogo () {
+    coleta_dados_iniciais();
+
+    char campo_interno[linhas * colunas];
+    char campo_usuario[linhas * colunas];
+
+    preenche_campo (campo_interno);
+    preenche_campo (campo_usuario);
+
+    imprime_campo (campo_usuario);
+
+    pega_jogada ();
+    primeira_jogada (campo_interno, campo_usuario);
+
+    // TODO: while true para o jogo pedir novas jogadas ate o jogador perder ou vencer
+}
+
+int main() {
 	apresentacao();
 
     int escolha; // escolha do menu informada pelo usuario
@@ -457,7 +363,7 @@ int main(){
 		
 		switch(escolha){
 			case 1:
-				iniciaJogo();
+				jogo();
 			break;
 			
 			case 2:
@@ -469,8 +375,10 @@ int main(){
 			break;
 			
 			default:
-				printf("Não existe opção para sua escolha");
+				cout << "Não existe opção para sua escolha" << endl;
 			break;
 		}
 	}
+
+    return 0;
 }
