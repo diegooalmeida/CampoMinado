@@ -27,7 +27,7 @@ using namespace std;
 
 // -=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=- Layouts -=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=- //
 // Apresentacao inicial
-void apresentacao() {
+void mensagem_apresentacao() {
 	cout << endl;
 	cout << "██████╗ ███████╗███╗   ███╗    ██╗   ██╗██╗███╗   ██╗██████╗  ██████╗ " << endl;
 	cout << "██╔══██╗██╔════╝████╗ ████║    ██║   ██║██║████╗  ██║██╔══██╗██╔═══██╗" << endl;
@@ -37,7 +37,7 @@ void apresentacao() {
 	cout << "╚═════╝ ╚══════╝╚═╝     ╚═╝      ╚═══╝  ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝ " << endl;
 }
 // Perdeu o jogo
-void perdeu(){
+void mensagem_perdeu(){
     cout << endl;
     cout << "██╗   ██╗ ██████╗  ██████╗███████╗    ██████╗ ███████╗██████╗ ██████╗ ███████╗██╗   ██╗██╗ " << endl;
     cout << "██║   ██║██╔═══██╗██╔════╝██╔════╝    ██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔════╝██║   ██║██║ " << endl; 
@@ -48,7 +48,7 @@ void perdeu(){
 	cout << endl << endl;
 }
 // Ganhou o jogo
-void ganhou(){
+void mensagem_ganhou(){
     cout << endl;
     cout << "██╗   ██╗ ██████╗  ██████╗███████╗    ██╗   ██╗███████╗███╗   ██╗ ██████╗███████╗██╗   ██╗██╗██╗██╗██╗██╗██╗██╗██╗" << endl;
     cout << "██║   ██║██╔═══██╗██╔════╝██╔════╝    ██║   ██║██╔════╝████╗  ██║██╔════╝██╔════╝██║   ██║██║██║██║██║██║██║██║██║" << endl;
@@ -59,7 +59,7 @@ void ganhou(){
 	cout << endl << endl;
 }
 // Menu do jogo
-void menu(){
+void mensagem_menu(){
 		cout << "" << endl;
 		cout << "|-----------------------------------------------------------------------------|" << endl;
 		cout << "|                                 Menu                                        |" << endl;
@@ -71,7 +71,7 @@ void menu(){
 }
 // Tela de créditos
 // TODO: Pegar o sobrenome de Everton
-void creditos(){
+void mensagem_creditos(){
 		cout << "" << endl;
 		cout << "|-----------------------------------------------------------------------------|" << endl;
 		cout << "|                             PLP 2019.2                                      |" << endl;
@@ -90,6 +90,9 @@ void creditos(){
 int linhas, colunas, bombas; // quantidade de cada uma dessas coisas no jogo
 int x, y; // posicao da jogada do jogador
 char m; // tipo de jogada do jogador: R - revelar, F - bandeira, ? - interrogacao
+bool perdeu = false; // diz se o jogador perdeu (se ele revelou uma bomba)
+bool venceu = false;
+int quadrados_revelados = 1;
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
 
 void coleta_dados_iniciais () {
@@ -104,10 +107,13 @@ void coleta_dados_iniciais () {
 
 		cout << endl << endl;
 
+/*
 		if (linhas < 9 || linhas > 16 || colunas < 9 || colunas > 30 || bombas < 10 || bombas > 99)
 			cout << "Valores inválidos, tente novamente." << endl;
 		else
+		*/
 			break;
+			
 	}
 }
 
@@ -170,9 +176,10 @@ void imprime_campo (char campo[]) {
 
 void pega_jogada () {
 	while (true) {
-		cout << "Informe sua jogada" << endl;
+		cout << "Informe sua jogada: ";
 		char a;
 		cin >> m >> a >> y;
+		cout << endl;
 
 		x = ((int) a) - 65; // x será lido como um char. Vamos converter de char pra um int para trabalhar
 							// com indices no array.
@@ -180,9 +187,9 @@ void pega_jogada () {
 
 		if (m != 'R' && m != 'F' && m != '?')
 			cout << "Jogada invalida." << endl;
-		else if (x < 1 || x > linhas) 
+		else if (x < 0 || x > linhas) 
 			cout << "Linha inválida." << endl;
-		else if (y < 1 || y > colunas)
+		else if (y < 0 || y > colunas)
 			cout << "Coluna inválida" << endl;
 		else 
 			break;
@@ -331,7 +338,250 @@ void primeira_jogada (char campo_interno[], char campo_usuario[]) {
 
 }
 
-// TODO: metodo para revelar quadrados adjacentes
+void revela_quadrado(char campo_interno[], char campo_usuario[], int posicao) {
+	if (campo_usuario[posicao] == '+') {
+		campo_usuario[posicao] = campo_interno[posicao];
+		quadrados_revelados++;
+	}
+}
+
+void revela_arredores (char campo_interno[], char campo_usuario[], int i, int j) {
+	// Quando o quadrado a ser revelado está "no meio" do tabuleiro
+	if (i-1 >= 0 && i+1 < linhas && j-1 >= 0 && j+1 < colunas) {
+		
+		// revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j-1));
+		revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j));
+		// revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j+1));
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j-1));
+		//	
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j+1));
+		// revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j-1));
+		revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j));
+		// revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j+1));
+
+	// Quando o quadrado está no canto superior esquerdo
+	} else if (i-1 < 0 && j-1 < 0) {
+		//	
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j+1));
+		revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j));
+		// revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j+1));
+	
+	// Quando o quadrado está "no meio" na parte superior
+	} else if (i-1 < 0 && j-1 >= 0 && j+1 < colunas) {
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j-1));
+		//	
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j+1));
+		// revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j-1));
+		revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j));
+		// revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j+1));
+
+	// O quadrado está no canto superior direito
+	} else if (i-1 < 0 && j+1 >= colunas) {
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j-1));
+		//	
+		// revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j-1));
+		revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j));
+
+	// O quadrado está "no meio" na lateral esquerda
+	} else if (i-1 >= 0 && i+1 < linhas && j-1 < 0) {
+		revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j));
+		// revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j+1));
+		//	
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j+1));
+		revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j));
+		// revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j+1));
+
+	// O quadrado está "no meio" na lateral direita
+	} else if (i-1 >= 0 && i+1 < linhas && j+1 >= colunas) {
+		// revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j-1));
+		revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j));
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j-1));
+		//	
+		// revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j-1));
+		revela_quadrado(campo_interno, campo_usuario, (i+1)*linhas + (j));
+
+	// O quadrado está na parte inferior esquerda
+	} else if (i+1 >= linhas && j-1 < 0) {
+		revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j));
+		// revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j+1));
+		//	
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j+1));
+
+	// O quadrado está "no meio" da parte inferior
+	} else if (i+1 >= linhas && j-1 >= 0 && j+1 < colunas) {
+		// revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j-1));
+		revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j));
+		// revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j+1));
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j-1));
+		//	
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j+1));
+
+	// O quadrado está na parte inferior direita
+	} else {
+		// revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j-1));
+		revela_quadrado(campo_interno, campo_usuario, (i-1)*linhas + (j));
+		revela_quadrado(campo_interno, campo_usuario, (i)*linhas + (j-1));
+		//
+	}
+}
+
+bool arredores_revelados (char campo_usuario[], int i, int j) {
+	// Quando o quadrado a ser checado está "no meio" do tabuleiro
+	if (i-1 >= 0 && i+1 < linhas && j-1 >= 0 && j+1 < colunas) {
+		if (// campo_usuario[(i-1)*linhas + (j-1)] == '+' || 
+			campo_usuario[(i-1)*linhas + (j)] == '+' || 
+			// campo_usuario[(i-1)*linhas + (j+1)] == '+' || 
+			campo_usuario[(i)*linhas + (j-1)] == '+' || 
+			//
+			campo_usuario[(i)*linhas + (j+1)] == '+' || 
+			// campo_usuario[(i+1)*linhas + (j-1)] == '+' || 
+			campo_usuario[(i+1)*linhas + (j)] == '+' // || 
+			// campo_usuario[(i+1)*linhas + (j+1)] == '+'
+			) {
+			return false;
+		}
+
+	// Quando o quadrado está no canto superior esquerdo
+	} else if (i-1 < 0 && j-1 < 0) {
+		if (//
+			campo_usuario[(i)*linhas + (j+1)] == '+' || 
+			campo_usuario[(i+1)*linhas + (j)] == '+' // || 
+			// campo_usuario[(i+1)*linhas + (j+1)] == '+'
+			) {
+			return false;
+		}
+	
+	// Quando o quadrado está "no meio" na parte superior
+	} else if (i-1 < 0 && j-1 >= 0 && j+1 < colunas) {
+		if (campo_usuario[(i)*linhas + (j-1)] == '+' || 
+			//
+			campo_usuario[(i)*linhas + (j+1)] == '+' || 
+			// campo_usuario[(i+1)*linhas + (j-1)] == '+' || 
+			campo_usuario[(i+1)*linhas + (j)] == '+'//  || 
+			// campo_usuario[(i+1)*linhas + (j+1)] == '+'
+			) {
+				return false;
+		}
+
+	// O quadrado está no canto superior direito
+	} else if (i-1 < 0 && j+1 >= colunas) {
+		if (campo_usuario[(i)*linhas + (j-1)] == '+' || 
+			//
+			// campo_usuario[(i+1)*linhas + (j-1)] == '+' || 
+			campo_usuario[(i+1)*linhas + (j)] == '+') {
+				return false;
+			}
+
+	// O quadrado está "no meio" na lateral esquerda
+	} else if (i-1 >= 0 && i+1 < linhas && j-1 < 0) {
+		if (campo_usuario[(i-1)*linhas + (j)] == '+' || 
+			// campo_usuario[(i-1)*linhas + (j+1)] == '+' || 
+			//
+			campo_usuario[(i)*linhas + (j+1)] == '+' || 
+			campo_usuario[(i+1)*linhas + (j)] == '+' // || 
+			// campo_usuario[(i+1)*linhas + (j+1)] == '+'
+			) {
+				return false;
+		}
+
+	// O quadrado está "no meio" na lateral direita
+	} else if (i-1 >= 0 && i+1 < linhas && j+1 >= colunas) {
+		if (// campo_usuario[(i-1)*linhas + (j-1)] == '+' || 
+			campo_usuario[(i-1)*linhas + (j)] == '+' || 
+			campo_usuario[(i)*linhas + (j-1)] == '+' || 
+			//
+			// campo_usuario[(i+1)*linhas + (j-1)] == '+' || 
+			campo_usuario[(i+1)*linhas + (j)] == '+') {
+				return false;
+		}
+
+	// O quadrado está na parte inferior esquerda
+	} else if (i+1 >= linhas && j-1 < 0) {
+		if (campo_usuario[(i-1)*linhas + (j)] == '+' || 
+			// campo_usuario[(i-1)*linhas + (j+1)] == '+' || 
+			//
+			campo_usuario[(i)*linhas + (j+1)] == '+') {
+				return false;
+		}
+
+	// O quadrado está "no meio" da parte inferior
+	} else if (i+1 >= linhas && j-1 >= 0 && j+1 < colunas) {
+		if (// campo_usuario[(i-1)*linhas + (j-1)] == '+' || 
+			campo_usuario[(i-1)*linhas + (j)] == '+' || 
+			// campo_usuario[(i-1)*linhas + (j+1)] == '+' || 
+			campo_usuario[(i)*linhas + (j-1)] == '+' || 
+			//
+			campo_usuario[(i)*linhas + (j+1)] == '+') {
+				return false;
+		}
+
+	// O quadrado está na parte inferior direita
+	} else {
+		if (// campo_usuario[(i-1)*linhas + (j-1)] == '+' || 
+			campo_usuario[(i-1)*linhas + (j)] == '+' || 
+			campo_usuario[(i)*linhas + (j-1)] == '+') {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void revela (char campo_interno[], char campo_usuario[]) {
+
+	if (campo_interno[x*linhas + y] == 'B') {
+		perdeu = true;
+	} else {
+		revela_quadrado(campo_interno, campo_usuario, x*linhas + y);
+
+		// Revela tudo ao redor até achar um número
+		bool revelou = true;
+		while (revelou) {
+			revelou = false;
+
+			for (int i = 0; i < linhas; i++) {
+				for (int j = 0; j < colunas; j++) {
+					if (!arredores_revelados(campo_usuario, i, j)) {
+						if (campo_usuario[i*linhas + j] == '0') {
+							revela_arredores (campo_interno, campo_usuario, i, j);
+							revelou = true;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void jogada_revelar (char campo_interno[], char campo_usuario[]) {
+	if (campo_usuario[x*linhas + y] == 'F') 
+		cout << "Não é possível revelar uma bandeira" << endl;
+
+	else if (campo_usuario[x*linhas + y] != '+')
+		cout << "Quadrado já revelado" << endl;
+
+	else 
+		revela(campo_interno, campo_usuario);
+	
+}
+
+void jogada (char campo_interno[], char campo_usuario[]) {
+	pega_jogada();
+	switch (m) {
+		case 'R':
+			jogada_revelar(campo_interno, campo_usuario);
+		break;
+		case 'F':
+			// TODO
+		break;
+		case '?':
+			// TODO
+		break;
+		default:
+			cout << "Jogada inválida." << endl;
+		break;
+	}
+}
 
 void jogo () {
     coleta_dados_iniciais();
@@ -347,18 +597,27 @@ void jogo () {
     pega_jogada ();
     primeira_jogada (campo_interno, campo_usuario);
 
-    // TODO: while true para o jogo pedir novas jogadas ate o jogador perder ou vencer
+	while (!perdeu && !venceu) {
+		cout << "-=-=-=-=-=-=- CAMPO MINADO -=-=-=-=-=-=-=-" << endl;
+		imprime_campo(campo_usuario);
+		jogada(campo_interno, campo_usuario);
+		cout << "Quadrados revelados: " << quadrados_revelados << endl;
+		cout << "Restam: " << linhas*colunas - quadrados_revelados << endl;
+		if (quadrados_revelados == (linhas*colunas - bombas)) 
+			venceu = true;
+	}
+
+	imprime_campo(campo_interno);
 }
 
 int main() {
-	apresentacao();
+	mensagem_apresentacao();
 
     int escolha; // escolha do menu informada pelo usuario
 	 	
 	// Menu do jogo
-	
-	while (true) {
-		menu();
+	while (!perdeu && !venceu) {
+		mensagem_menu();
 		cin >> escolha;
 		
 		switch(escolha){
@@ -367,7 +626,7 @@ int main() {
 			break;
 			
 			case 2:
-				creditos();
+				mensagem_creditos();
 			break;
 			
 			case 3:
@@ -380,5 +639,21 @@ int main() {
 		}
 	}
 
+	if (perdeu) {
+		mensagem_perdeu();
+	} else if (venceu) {
+		mensagem_ganhou();
+	}
+
     return 0;
 }
+
+/* 
+	TODO: agora falta:
+		- fazer o método para adicionar bandeiras e interrogações,
+		  lembrando de não permitir revelar quadrados com bandeiras
+		- Fazer o display que mostra quantos quadrados faltam ser revelados e quantas bombas faltam ser descobertas
+		- Fazer a funcão de tempo e mostrar no final
+
+		- Por último, mas não menos importante: TESTAR
+*/
