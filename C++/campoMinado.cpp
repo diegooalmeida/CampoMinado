@@ -1,6 +1,5 @@
 #include <iostream>
 #include "tabuleiro.h"
-
 using namespace std;
 
 /*
@@ -134,10 +133,17 @@ int main() {
 
 /* 
 	TODO: agora falta:
-		- fazer o método para adicionar bandeiras e interrogações,
-		  lembrando de não permitir revelar quadrados com bandeiras
-		- Fazer o display que mostra quantos quadrados faltam ser revelados e quantas bombas faltam ser descobertas
-		- Fazer a funcão de tempo e mostrar no final
+		- mudar o método instrucao() para mensagem_instrucao() para seguir o padrão
+		- fazer uma forma do usuario poder sair do jogo enquanto está jogando. por exemplo, ao digitar S
+		- mudar tudo que ta em inglês pra português
+		- tratar quando o usuario colocar mais bombas do que a área do campo. Limitar as bombas para no máximo (linhas*colunas)-1
+		- alterar a primeira jogada para revelar vários espaços, caso seja necessário. Basta chamar o método revela dentro de primeira jogada.
+		- melhorar a mensagem que aparece a cada jogada para mostrar:
+		-- quantas bombas foram encontradas (bomas - bandeiras) (pra isso tem que ter um contador pras bandeiras) poderia colocar no modelo bombasEncontradas / total (ex: 5/16);
+		-- quantos quadrados foram revelados
+		quanto tempo se passou
+		- fazer um shift das coisas que aparecem na tela (é só botar uns espaços em tudo que é printado)
+
 
 		- Por último, mas não menos importante: TESTAR
 */

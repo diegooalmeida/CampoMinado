@@ -23,7 +23,9 @@ void tempoInicio ();
 void tempoFim();
 
 
-
+/*
+Coleta os dados do tamanho do campo e da quantidade de bombas
+*/
 void coleta_dados_iniciais () {
     while (true) {
 		cout << "Informe o tamanho M N da matriz e o numero X de bombas com:" << endl;
@@ -49,6 +51,10 @@ void coleta_dados_iniciais () {
 	}
 }
 
+/* 
+Preenche o campo com carateres '+'. Como em C++ o vetor começar com o que tiver na memória, usamos esse método para
+"limpar" o vetor.
+*/
 void preenche_campo(char campo[]) {
 	for (int i = 0; i < linhas; i++) {
 		for (int j = 0; j < colunas; j++) {
@@ -57,6 +63,9 @@ void preenche_campo(char campo[]) {
 	}
 }
 
+/*
+Imprime o campo com legendas para linhas e colunas.
+*/
 void imprime_campo (char campo[]) {
 
 	cout << endl << endl;
@@ -106,6 +115,9 @@ void imprime_campo (char campo[]) {
 	cout << endl << endl;
 }
 
+/*
+Registra que tipo de jogada e em qual posicao ela será feita.
+*/
 void pega_jogada () {
 	while (true) {
 		cout << "Informe sua jogada: ";
@@ -131,6 +143,9 @@ void pega_jogada () {
 	}
 }
 
+/*
+Gera bombas em lugares aleatórios do campo interno, com exceção do lugar onde a primeira jogada foi feita.
+*/
 void gera_bombas (char campo_interno[]) {
 	int counter = 0;
 	int b;
@@ -143,6 +158,9 @@ void gera_bombas (char campo_interno[]) {
 	}
 }
 
+/*
+Preenche todas as posições do campo interno que não são bombas com 0.
+*/
 void preenche_campo_com_zeros (char campo_interno[]) {
     for (int c = 0; c < linhas*colunas; c++) {
         if (campo_interno[c] == '+')
@@ -150,6 +168,9 @@ void preenche_campo_com_zeros (char campo_interno[]) {
     }
 }
 
+/*
+"Soma um" ao valor do quadrado passado como parâmetro.
+*/
 void soma_um (char campo_interno[], int p) {
 	if (campo_interno[p] == '0') {
 		campo_interno[p] = '1';
@@ -171,6 +192,9 @@ void soma_um (char campo_interno[], int p) {
 
 }
 
+/*
+Diz quantas bombas existem ao redor do quadrado da posição passada como parâmetro
+*/
 void calcula_arredores (char campo_interno[], int i, int j) {
 	// Quando o quadrado a ser revelado está "no meio" do tabuleiro
 	if (i-1 >= 0 && i+1 < linhas && j-1 >= 0 && j+1 < colunas) {
@@ -252,6 +276,9 @@ void calcula_arredores (char campo_interno[], int i, int j) {
 
 }
 
+/*
+Como a primeira jogada não pode ser uma bomba, ela é especial, pois as bombas só são geradas após ela ocorrer.
+*/
 void primeira_jogada (char campo_interno[], char campo_usuario[]) {
 
 	campo_interno[x*linhas + y] = '0';
@@ -273,6 +300,9 @@ void primeira_jogada (char campo_interno[], char campo_usuario[]) {
 
 }
 
+/*
+Revela um quadrado no campo do usuário com base no que existe na mesma posição no campo interno.
+*/
 void revela_quadrado(char campo_interno[], char campo_usuario[], int posicao) {
 	if (campo_usuario[posicao] == '+') {
 		campo_usuario[posicao] = campo_interno[posicao];
@@ -280,6 +310,10 @@ void revela_quadrado(char campo_interno[], char campo_usuario[], int posicao) {
 	}
 }
 
+/*
+Método usado para auxiliar a revelação consecutiva de quadrados sem bombas ao redor. Se o quadrado da posição passada
+como parâmetro não tiver bombas ao redor, revela os quadrados amica, abaixo, à esquerda e à direita.
+*/
 void revela_arredores (char campo_interno[], char campo_usuario[], int i, int j) {
 	// Quando o quadrado a ser revelado está "no meio" do tabuleiro
 	if (i-1 >= 0 && i+1 < linhas && j-1 >= 0 && j+1 < colunas) {
@@ -360,6 +394,9 @@ void revela_arredores (char campo_interno[], char campo_usuario[], int i, int j)
 	}
 }
 
+/*
+Diz se os aredores de uma posição já foram revelados. Método usado para evitar uma repetição infinita de revelações.
+*/
 bool arredores_revelados (char campo_usuario[], int i, int j) {
 	// Quando o quadrado a ser checado está "no meio" do tabuleiro
 	if (i-1 >= 0 && i+1 < linhas && j-1 >= 0 && j+1 < colunas) {
@@ -462,6 +499,10 @@ bool arredores_revelados (char campo_usuario[], int i, int j) {
 	return true;
 }
 
+/*
+Método geral para revelar a posição da jogada de revelar. Como tal posição é armazenada em variáveis globais, elas
+não são passadas como parâmetro.
+*/
 void revela (char campo_interno[], char campo_usuario[]) {
 
 	if (campo_interno[x*linhas + y] == 'B') {
@@ -488,6 +529,9 @@ void revela (char campo_interno[], char campo_usuario[]) {
 	}
 }
 
+/*
+Analisa a validade de uma jogada de revelar.
+*/
 void jogada_revelar (char campo_interno[], char campo_usuario[]) {
 	if (campo_usuario[x*linhas + y] == 'F') 
 		cout << "Não é possível revelar uma bandeira" << endl;
@@ -500,16 +544,22 @@ void jogada_revelar (char campo_interno[], char campo_usuario[]) {
 	
 }
 
+/*
+Analisa a validade de uma jogada de bandeira.
+*/
 void jogada_flag(char campo_usuario[]){ // recebo, ex A2 xc
 	if(campo_usuario[x*linhas+y] == '+'){
 		campo_usuario[x*linhas + y] = 'F';
 	} else if(campo_usuario[x*linhas+y] == 'F'){
 		campo_usuario[x*linhas + y] = '+';} 
 	else {
-		cout << "Não é possível colocar uma flag" << endl;
+		cout << "Não é possível colocar uma bandeira" << endl;
 	}
 }
 
+/*
+Analisa a validade de uma jogada de interrogação.
+*/
 void jogada_interrogacao(char campo_usuario[]){
 	if(campo_usuario[x*linhas+y] == '+' or campo_usuario[x*linhas+y] == 'F'){
 		campo_usuario[x*linhas+y] = '?';
@@ -520,23 +570,29 @@ void jogada_interrogacao(char campo_usuario[]){
 	}
 }
 
-
+/*
+Analisa que tipo de jogada será realizada.
+*/
 void jogada (char campo_interno[], char campo_usuario[]) {
 	pega_jogada();
-	if(m == 'R')jogada_revelar(campo_interno, campo_usuario);
-	else if(m == 'F'){
+	if(m == 'R')
+		jogada_revelar(campo_interno, campo_usuario);
+	else if(m == 'F')
 		jogada_flag(campo_usuario);
-	}
-	else if(m == '?'){
+	else if(m == '?')
 		jogada_interrogacao(campo_usuario);
-	}else cout << "Jogada inválida." << endl;
+	else
+		cout << "Jogada inválida." << endl;
 }
 
-
+/*
+Método que "roda" o jogo em si. Contém todos os outros.
+*/
 void inicia_jogo () {
 	tempoInicio();
     char campo_interno[linhas * colunas];
     char campo_usuario[linhas * colunas];
+
 
     preenche_campo (campo_interno);
     preenche_campo (campo_usuario);
@@ -545,7 +601,7 @@ void inicia_jogo () {
 
     pega_jogada ();
     primeira_jogada (campo_interno, campo_usuario);
-    printf("Tempo gasto: %lf s\n", tDecorrido);
+    cout << "Tempo gasto: " << tDecorrido << " s" << endl;
 
 	while (!perdeu && !venceu) {
 		cout << "-=-=-=-=-=-=- CAMPO MINADO -=-=-=-=-=-=-=-" << endl;
@@ -561,13 +617,18 @@ void inicia_jogo () {
 }
 
 
-
+/*
+Usado para iniciar um contador de tempo.
+*/
 void tempoInicio (){
 
     //iniciando a contagem do tempo
     tInicio=clock();
 }
 
+/*
+Usado para saber quanto tempo se passou desde o início do contador.
+*/
  void tempoFim(){
 
     //terminando a contagem do tempo
@@ -578,4 +639,3 @@ void tempoInicio (){
 
     printf("Tempo gasto: %lf s\n", tDecorrido);
 }
-
