@@ -66,7 +66,8 @@ void mensagem_menu(){
 		cout << "|                                 Menu                                        |" << endl;
 		cout << "|                           (1) Iniciar Jogo                                  |" << endl;
 		cout << "|                           (2) Créditos                                      |" << endl;
-		cout << "|                           (3) Sair do Jogo                                  |" << endl;
+		cout << "|                           (3) Instruções do Jogo                            |" << endl;
+		cout << "|                           (4) Sair do Jogo                                  |" << endl;
 		cout << "|-----------------------------------------------------------------------------|" << endl;
 		cout << endl << endl;
 }
@@ -86,6 +87,17 @@ void mensagem_creditos(){
 		cout << "|-----------------------------------------------------------------------------|" << endl;
 }
 
+void instrucoes(){
+	cout << "" << endl;
+		cout << "|-----------------------------------------------------------------------------|" << endl;
+		cout << "|                          Instruçoes do Jogo                                 |" << endl;
+		cout << "|                                                                             |" << endl;
+		cout << "|              R - Revela, exemplo: R A 2 - revela posição A2                 |" << endl;
+		cout << "|              F - Flah, exemplo: F A 2 - insere uma flag na posição A2       |" << endl;
+		cout << "|              ? - Interrogação: ? A 2 - insere uma ? na posição A2           |" << endl;
+		cout << "|-----------------------------------------------------------------------------|" << endl;
+}
+
 
 
 int main() {
@@ -101,8 +113,12 @@ int main() {
 			coleta_dados_iniciais();
 			inicia_jogo();
 		}
-		else if(escolha == "2")mensagem_creditos();
-		else if(escolha == "3")exit(0);
+		else if(escolha == "2")
+			mensagem_creditos();
+		else if(escolha == "3")
+			instrucoes();
+		else if(escolha == "4")
+			break;
 		else cout << "Não existe opção para sua escolha" << endl;
 	}
 

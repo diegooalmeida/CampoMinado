@@ -14,7 +14,13 @@ char m; // tipo de jogada do jogador: R - revelar, F - bandeira, ? - interrogaca
 bool perdeu = false; // diz se o jogador perdeu (se ele revelou uma bomba)
 bool venceu = false;
 int quadrados_revelados = 1;
+clock_t tInicio, Tfim;//declarando as variaveis da contagem do tempo
+double tDecorrido; //variavel do tipo double para armazenar todo o tempo decorrido
 
+
+
+void tempoInicio ();
+void tempoFim();
 
 
 
@@ -494,18 +500,41 @@ void jogada_revelar (char campo_interno[], char campo_usuario[]) {
 	
 }
 
+void jogada_flag(char campo_usuario[]){ // recebo, ex A2 xc
+	if(campo_usuario[x*linhas+y] == '+'){
+		campo_usuario[x*linhas + y] = 'F';
+	} else if(campo_usuario[x*linhas+y] == 'F'){
+		campo_usuario[x*linhas + y] = '+';} 
+	else {
+		cout << "Não é possível colocar uma flag" << endl;
+	}
+}
+
+void jogada_interrogacao(char campo_usuario[]){
+	if(campo_usuario[x*linhas+y] == '+' or campo_usuario[x*linhas+y] == 'F'){
+		campo_usuario[x*linhas+y] = '?';
+	} else if(campo_usuario[x*linhas+y] = '?'){
+		campo_usuario[x*linhas+y] = '+';
+	} else {
+		cout << "Não é possível colocar um ?" << endl;
+	}
+}
+
+
 void jogada (char campo_interno[], char campo_usuario[]) {
 	pega_jogada();
 	if(m == 'R')jogada_revelar(campo_interno, campo_usuario);
-	else if(m == 'F'){//todo
+	else if(m == 'F'){
+		jogada_flag(campo_usuario);
 	}
-	else if(m == '?'){//todo
+	else if(m == '?'){
+		jogada_interrogacao(campo_usuario);
 	}else cout << "Jogada inválida." << endl;
 }
 
 
 void inicia_jogo () {
-
+	tempoInicio();
     char campo_interno[linhas * colunas];
     char campo_usuario[linhas * colunas];
 
@@ -516,6 +545,7 @@ void inicia_jogo () {
 
     pega_jogada ();
     primeira_jogada (campo_interno, campo_usuario);
+    printf("Tempo gasto: %lf s\n", tDecorrido);
 
 	while (!perdeu && !venceu) {
 		cout << "-=-=-=-=-=-=- CAMPO MINADO -=-=-=-=-=-=-=-" << endl;
@@ -525,7 +555,27 @@ void inicia_jogo () {
 		cout << "Restam: " << linhas*colunas - quadrados_revelados << endl;
 		if (quadrados_revelados == (linhas*colunas - bombas)) 
 			venceu = true;
+			tempoFim();
 	}
-
 	imprime_campo(campo_interno);
 }
+
+
+
+void tempoInicio (){
+
+    //iniciando a contagem do tempo
+    tInicio=clock();
+}
+
+ void tempoFim(){
+
+    //terminando a contagem do tempo
+    Tfim=clock();
+
+    //calcuulando o tempo decorrido
+    tDecorrido= ((double)(tInicio-Tfim)/CLOCKS_PER_SEC); //aqui simplesmente estamos calculando o tempo que inicio e o tempo que terminou e subtraindo o valor
+
+    printf("Tempo gasto: %lf s\n", tDecorrido);
+}
+
