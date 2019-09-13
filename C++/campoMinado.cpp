@@ -101,6 +101,7 @@ void instrucoes(){
 
 
 int main() {
+	system ("color cb");
 	mensagem_apresentacao();
 
     string escolha; // escolha do menu informada pelo usuario
