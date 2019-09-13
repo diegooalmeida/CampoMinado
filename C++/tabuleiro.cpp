@@ -13,8 +13,9 @@ int x, y; // posicao da jogada do jogador
 char m; // tipo de jogada do jogador: R - revelar, F - bandeira, ? - interrogacao
 bool perdeu = false; // diz se o jogador perdeu (se ele revelou uma bomba)
 bool venceu = false;
-int quadrados_revelados = 1;
+int quadrados_revelados = 0;
 int bombas_encontradas = 0;
+bool primeira = true;
 clock_t tInicio, tFim;//declarando as variaveis da contagem do tempo
 double tDecorrido; //variavel do tipo double para armazenar todo o tempo decorrido
 
@@ -28,10 +29,11 @@ void tempoFim();
 Coleta os dados do tamanho do campo e da quantidade de bombas
 */
 void coleta_dados_iniciais () {
+	primeira = true;
     while (true) {
 		cout << "Informe o tamanho M N da matriz e o numero X de bombas com:" << endl;
 		cout << "3 <= M <= 16  ,  3 <= N <= 30  e  2 <= X < (M*N)-1" << endl;
-		cout << "Sugerimos: 16 16 40" << endl;
+		cout << "Sugerimos: 16 16 20" << endl;
 		cout << endl;
 		string l, c, b;
 
@@ -555,27 +557,12 @@ void jogada_interrogacao(char campo_usuario[]){
 }
 
 /*
-Analisa que tipo de jogada será realizada.
-*/
-void jogada (char campo_interno[], char campo_usuario[]) {
-	pega_jogada();
-	if(m == 'R')
-		jogada_revelar(campo_interno, campo_usuario);
-	else if(m == 'F')
-		jogada_bandeira(campo_usuario);
-	else if(m == '?')
-		jogada_interrogacao(campo_usuario);
-	else
-		cout << "Jogada inválida." << endl;
-}
-
-
-/*
 Como a primeira jogada não pode ser uma bomba, ela é especial, pois as bombas só são geradas após ela ocorrer.
 */
 void primeira_jogada (char campo_interno[], char campo_usuario[]) {
 
 	campo_interno[x*linhas + y] = '0';
+	quadrados_revelados++;
 	
     gera_bombas(campo_interno);
     
@@ -593,8 +580,32 @@ void primeira_jogada (char campo_interno[], char campo_usuario[]) {
     campo_usuario[x*linhas + y] = campo_interno[x*linhas + y];
 	revela(campo_interno, campo_usuario);
 
+
 }
 
+/*
+Analisa que tipo de jogada será realizada.
+*/
+void jogada (char campo_interno[], char campo_usuario[]) {
+	pega_jogada();
+	if(m == 'R') {
+		if (primeira) {
+			if (campo_usuario[x*linhas + y] == 'F')
+				cout << endl << "Não é possível revelar uma bandeira!" << endl << endl;
+			else {
+				primeira_jogada(campo_interno, campo_usuario);
+				primeira = false;
+			}
+		} else 
+			jogada_revelar(campo_interno, campo_usuario);
+	}
+	else if(m == 'F')
+		jogada_bandeira(campo_usuario);
+	else if(m == '?')
+		jogada_interrogacao(campo_usuario);
+	else
+		cout << "Jogada inválida." << endl;
+}
 
 /*
 Método que "roda" o jogo em si. Contém todos os outros.
@@ -610,8 +621,9 @@ void inicia_jogo () {
 
     imprime_campo (campo_usuario);
 
-    pega_jogada();
-    primeira_jogada (campo_interno, campo_usuario);
+	
+	jogada(campo_interno, campo_usuario);
+
 	cout << "Quadrados revelados: " << quadrados_revelados << "/" << linhas*colunas - bombas << endl;
 	cout << "Bombas encontradas: " << bombas_encontradas << "/" << bombas << endl;
     tempoFim();

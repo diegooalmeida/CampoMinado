@@ -10,8 +10,10 @@ extern bool perdeu; // diz se o jogador perdeu (se ele revelou uma bomba)
 extern bool venceu;
 extern int quadrados_revelados;
 extern int bombas_encontradas;
+extern bool primeiro;
 extern clock_t tInicio, tFim;
 extern double tDecorrido;
+
 
 void coleta_dados_iniciais();
 
