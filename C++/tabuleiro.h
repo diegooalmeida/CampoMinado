@@ -9,7 +9,9 @@ extern char m; // tipo de jogada do jogador: R - revelar, F - bandeira, ? - inte
 extern bool perdeu; // diz se o jogador perdeu (se ele revelou uma bomba)
 extern bool venceu;
 extern int quadrados_revelados;
-
+extern int bombas_encontradas;
+extern clock_t tInicio, tFim;
+extern double tDecorrido;
 
 void coleta_dados_iniciais();
 
