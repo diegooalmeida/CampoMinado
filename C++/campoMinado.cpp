@@ -126,6 +126,5 @@ int main() {
 	} else if (venceu) {
 		mensagem_ganhou();
 	}
-
     return 0;
 }

@@ -127,7 +127,9 @@ void pega_jogada () {
 		cout << "Informe sua jogada: ";
 		char l;
 		string c;
-		cin >> m >> l >> c;
+		cin >> m;
+		if (m == 'S') break;
+		cin >> l >> c;
 		cout << endl;
 		
 		y = atoi(c.c_str());
@@ -138,9 +140,9 @@ void pega_jogada () {
 
 		if (m != 'R' && m != 'F' && m != '?')
 			cout << "Jogada invalida." << endl;
-		else if (x < 0 || x > linhas) 
+		else if (x < 0 || x > linhas-1) 
 			cout << "Linha inválida." << endl;
-		else if (y < 0 || y > colunas)
+		else if (y < 0 || y > colunas-1)
 			cout << "Coluna inválida" << endl;
 		else 
 			break;
@@ -527,7 +529,7 @@ void jogada_revelar (char campo_interno[], char campo_usuario[]) {
 /*
 Analisa a validade de uma jogada de bandeira.
 */
-void jogada_flag(char campo_usuario[]){ // recebo, ex A2 xc
+void jogada_bandeira(char campo_usuario[]){ // recebo, ex A2 xc
 	if(campo_usuario[x*linhas+y] == '+'){
 		campo_usuario[x*linhas + y] = 'F';
 		bombas_encontradas++;
@@ -560,7 +562,7 @@ void jogada (char campo_interno[], char campo_usuario[]) {
 	if(m == 'R')
 		jogada_revelar(campo_interno, campo_usuario);
 	else if(m == 'F')
-		jogada_flag(campo_usuario);
+		jogada_bandeira(campo_usuario);
 	else if(m == '?')
 		jogada_interrogacao(campo_usuario);
 	else
@@ -614,7 +616,7 @@ void inicia_jogo () {
 	cout << "Bombas encontradas: " << bombas_encontradas << "/" << bombas << endl;
     tempoFim();
 
-	while (!perdeu && !venceu) {
+	while (!perdeu && !venceu && m != 'S') {
 		cout << endl;
 		cout << "-=-=-=-=-=-=- CAMPO MINADO -=-=-=-=-=-=-=-" << endl;
 		imprime_campo(campo_usuario);
