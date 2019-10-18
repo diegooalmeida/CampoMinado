@@ -13,37 +13,26 @@ type Matriz = [Elem]
 criaMatriz:: Int -> Int -> Int -> Matriz
 criaMatriz a b c = [((x,y), c) | x <-[1,2..a], y <-[1,2..b]]
 
---Função que encontra as minas e chama a função soma adjacentes
+-- Função que encontra as bombas e chama a função soma adjacentes
+-- para adicionar 1 aos quadrados adjacentes das bombas
 minasAdjacentes:: Matriz -> Matriz -> Matriz
 minasAdjacentes [] matriz = matriz
 minasAdjacentes (((x, y), z): mtz) matriz = if (z == -1) then minasAdjacentes mtz (somaAdjacentes x y matriz) else (minasAdjacentes mtz matriz)
 
---Função que Inverte
+-- Funcao auxiliar
 inverte:: Int -> Int -> Matriz -> Matriz-> Matriz
 inverte a b mtz anterior = reverse (verificaSoma a b mtz anterior)
 
---Função que Verifica se a posição da matriz não eh uma bomba e soma + 1
+-- Função que Verifica se a posição da matriz não e uma bomba e soma + 1
 verificaSoma:: Int -> Int -> Matriz -> Matriz-> Matriz
 verificaSoma a b [] anterior = [ ]
 verificaSoma a b (((x, y), z): mtz) anterior = if(a == x && b == y && z /= -1) then anterior++(reverse ([((x,y), z+1)]++ mtz)) else verificaSoma a b mtz  anterior++[((x,y), z)]
 
---Função que soma os adjacentes a uma bomba
+-- Função que soma os adjacentes a uma bomba
 somaAdjacentes:: Int -> Int -> Matriz -> Matriz--campo minado e usuario e retorna a matriz usuario mostrando o elemento da posicao indicada.
-somaAdjacentes 1 1 mtz = inverte 1 2 (inverte 2 1 (inverte 2 2 mtz [])[])[]
-somaAdjacentes 1 y mtz = inverte 1 (y+1)(inverte 1 (y-1) (inverte 2 y (inverte 2 (y+1) (inverte 2 (y-1) mtz [])[])[])[])[]
-somaAdjacentes 1 9 mtz = inverte 1 8 (inverte 2 9 (inverte 2 8 mtz []) [])[]
-somaAdjacentes 9 1 mtz = inverte 9 2 (inverte 8 1 (inverte 8 2 mtz [])[])[]
-somaAdjacentes 9 y mtz = inverte 9 (y-1) (inverte 9 (y+1) (inverte 8 y (inverte 8 (y+1) (inverte 8 (y-1) mtz [])[])[])[])[]
-somaAdjacentes 9 9 mtz = inverte 9 8 (inverte 8 9 (inverte 8 8 mtz [])[])[]
-somaAdjacentes x 9 mtz = inverte x 8 (inverte (x-1) 9 (inverte (x-1) 8 (inverte (x+1) 9 (inverte (x+1) 8 mtz [])[])[])[])[]
 somaAdjacentes x y mtz = inverte x (y-1) (inverte x (y+1) (inverte (x-1) y (inverte (x-1) (y+1) (inverte (x-1) (y-1) (inverte (x+1) y (inverte (x+1) (y+1) (inverte (x+1) (y-1) mtz [])[])[])[])[])[])[])[]
 
---
---verificaSeVenceu:: Matriz -> Bool
---verificaSeVenceu [] = True 
---verificaSeVenceu (((x, y), z):mtzUsuario) = if(z == -2) then False else verificaSePerdeu mtzUsuario
---
-
+-- Se a posicao for uma bomba, retorna true, caso contrario, retorna false
 verificaPosicao :: (Int, Int) -> Matriz -> Bool
 verificaPosicao tupla [] = False
 verificaPosicao (x, y) (((a, b), c):mtzTail) = 
@@ -52,26 +41,18 @@ verificaPosicao (x, y) (((a, b), c):mtzTail) =
     else 
         verificaPosicao (x, y) mtzTail
 
---Função que modifica a matriz que é mostrada ao usuário pela matriz original(matriz que contém todas as informações)
+-- Função que modifica a matriz que é mostrada ao usuário usando a matriz interna
 revelaMatriz:: Matriz -> Matriz -> Matriz -> Matriz
 revelaMatriz [] mtzInterna mtzUsuario = mtzUsuario
 revelaMatriz (((a,b), c):mtzInternaTail) mtzInterna mtzUsuario = revelaMatriz mtzInternaTail mtzInterna (modificaMatriz a b mtzInterna mtzUsuario)
 
---Função que recebe o valor das coordenadas x e y e passa para a função modifica 
+-- Função que recebe o valor das coordenadas x e y e passa para a função modifica 
 modificaMatriz:: Int -> Int -> Matriz -> Matriz -> Matriz
-modificaMatriz x y (((a,b), c):mtz) mtz_usuario =
-	if (x == a && y == b) then
-		((modificaPosicao x y c mtz_usuario []))
-	else
-		modificaMatriz x y mtz mtz_usuario
+modificaMatriz x y (((a,b), c):mtz) mtz_usuario = if (x == a && y == b) then ((modificaPosicao x y c mtz_usuario [])) else modificaMatriz x y mtz mtz_usuario
 
---Função que modifica a matriz do usuário de acordo com as coordenadas recebidas
+-- Função que modifica a matriz do usuário de acordo com as coordenadas recebidas
 modificaPosicao:: Int -> Int -> Int -> Matriz -> Matriz -> Matriz 
-modificaPosicao x y z (((a,b), c):mtzUsuario) mtzFinal =
-	if (x == a && y == b) then
-		mtzFinal ++ (([((x, y), z)] ++ mtzUsuario))
-	else
-        modificaPosicao x y z mtzUsuario (mtzFinal ++ [((a,b), c)])
+modificaPosicao x y z (((a,b), c):mtzUsuario) mtzFinal = if (x == a && y == b) then mtzFinal ++ (([((x, y), z)] ++ mtzUsuario)) else modificaPosicao x y z mtzUsuario (mtzFinal ++ [((a,b), c)])
         
 -- Retorna uma lista de inteiros com os valores da linha passada como parametro
 pegaValoresDaLinha :: Int -> Int -> Matriz -> [Int]
@@ -177,12 +158,13 @@ entradas linhas colunas bombas mtzInterna mtzUsuario = do
         else
             if (contaNaoRevelados 0 matrizUsuarioReveladaRecursivamente == bombas) then Textos.mensagemVenceu else entradas linhas colunas bombas mtzInterna matrizUsuario 
     else do
-        putStrLn "outras jogadas."
+        putStrLn "Opcao invalida"
+        entradas linhas colunas bombas mtzInterna mtzUsuario
 
 inicia_jogo :: IO()
 inicia_jogo = do
-    putStrLn"Informe o tamanho M N da matriz e o numero X de bombas com:" 
-    putStrLn "3 <= M <= 16  ,  3 <= N <= 30  e  2 <= X < (M*N)-1" 
+    putStrLn"Informe o tamanho M N da matriz e o numero B de bombas com:" 
+    putStrLn "2 <= M <= 9  ,  2 <= N <= 9  e  1 <= B <= 9" 
     putStr "Sua opção:"
     entrada <- getLine
     putStrLn "\n"

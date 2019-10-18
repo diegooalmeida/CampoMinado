@@ -71,5 +71,5 @@ menuInstrucoes = do
     putStrLn "|-----------------------------------------------------------------------------|" 
     putStrLn "|                          Instruçoes do Jogo                                 |" 
     putStrLn "|                                                                             |" 
-    putStrLn "|              Revela, exemplo: 1 2 - Revela posição (1,2).                   |" 
+    putStrLn "|             Revela, exemplo: R 1 2 - Revela posição (1,2).                  |" 
     putStrLn "|-----------------------------------------------------------------------------|" 
