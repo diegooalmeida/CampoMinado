@@ -157,6 +157,8 @@ saiRevelando linhas colunas (((x, y), z):mtzUsuarioTail) mtzUsuario mtzInterna =
 
 entradas :: Int -> Int -> Int -> Matriz -> Matriz -> IO()
 entradas linhas colunas bombas mtzInterna mtzUsuario = do
+    putStr "Informe sua jogada:"
+    putStrLn"\n"
     entrada <- getLine
     let info = words entrada
     let x = read (info !! 0) :: Int
@@ -175,8 +177,11 @@ entradas linhas colunas bombas mtzInterna mtzUsuario = do
 
 inicia_jogo :: IO()
 inicia_jogo = do
-
+    putStrLn"Informe o tamanho M N da matriz e o numero X de bombas com:" 
+    putStrLn "3 <= M <= 16  ,  3 <= N <= 30  e  2 <= X < (M*N)-1" 
+    putStr "Sua opção:"
     entrada <- getLine
+    putStrLn "\n"
     let info = words entrada
     let linhas = read (info !! 0) :: Int
     let colunas = read (info !! 1) :: Int
@@ -191,19 +196,16 @@ inicia_jogo = do
     let semente2 = c
 
     let campo_minado = criaMatriz linhas colunas 0
-
-    imprimeMatriz linhas colunas campo_minado
-
     
     let posicoes_aleatorias = Auxiliar.geraPosicoesAleatorias linhas colunas bombas semente1 semente2 []
-    print (posicoes_aleatorias)
+    
     let campo_bombado = (insereBombas posicoes_aleatorias campo_minado)
-    imprimeMatriz linhas colunas campo_bombado
-
+    
     let prepara_campo_bombado = minasAdjacentes campo_bombado campo_bombado
-    imprimeMatriz linhas colunas prepara_campo_bombado
 
     let matriz_impressa = (criaMatriz linhas colunas (-2))
+    
+    imprimeMatriz linhas colunas matriz_impressa
 
     entradas linhas colunas bombas prepara_campo_bombado matriz_impressa
 
@@ -227,6 +229,7 @@ menu = do
         menu
     else if(escolha == "4") then do 
         exitSuccess
-    else
+    else do
         putStrLn "Opção inválida"
+        menu
         
