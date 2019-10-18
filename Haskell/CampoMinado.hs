@@ -8,6 +8,7 @@ type Valor = Int
 type Elem = (Coordenadas,Valor)
 type Matriz = [Elem]
 
+
 -- Cria uma matriz de valores igual ao terceiro parametro
 criaMatriz:: Int -> Int -> Int -> Matriz
 criaMatriz a b c = [((x,y), c) | x <-[1,2..a], y <-[1,2..b]]
