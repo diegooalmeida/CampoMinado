@@ -158,22 +158,26 @@ saiRevelando linhas colunas (((x, y), z):mtzUsuarioTail) mtzUsuario mtzInterna =
 entradas :: Int -> Int -> Int -> Matriz -> Matriz -> IO()
 entradas linhas colunas bombas mtzInterna mtzUsuario = do
     putStr "Informe sua jogada:"
-    putStrLn"\n"
-    entrada <- getLine
-    let info = words entrada
-    let x = read (info !! 0) :: Int
-    let y = read (info !! 1) :: Int
-
-    let matrizUsuario = if(verificaPosicao (x, y) mtzInterna) then revelaMatriz mtzInterna mtzInterna mtzUsuario else modificaMatriz x y mtzInterna mtzUsuario
     
-    let matrizUsuarioReveladaRecursivamente = saiRevelando linhas colunas matrizUsuario matrizUsuario mtzInterna
+    entrada <- getLine
+    putStrLn"\n"
+    let info = words entrada
+    let j = info !! 0
+    let x = read (info !! 1) :: Int
+    let y = read (info !! 2) :: Int
 
-    imprimeMatriz linhas colunas (matrizUsuarioReveladaRecursivamente)
-    if(verificaPosicao (x, y) mtzInterna) then
-        Textos.mensagemPerdeu
-    else
-        if (contaNaoRevelados 0 matrizUsuarioReveladaRecursivamente == bombas) then Textos.mensagemVenceu else entradas linhas colunas bombas mtzInterna matrizUsuario 
+    if(j == "R") then do
+        let matrizUsuario = if(verificaPosicao (x, y) mtzInterna) then revelaMatriz mtzInterna mtzInterna mtzUsuario else modificaMatriz x y mtzInterna mtzUsuario
+        
+        let matrizUsuarioReveladaRecursivamente = saiRevelando linhas colunas matrizUsuario matrizUsuario mtzInterna
 
+        imprimeMatriz linhas colunas (matrizUsuarioReveladaRecursivamente)
+        if(verificaPosicao (x, y) mtzInterna) then
+            Textos.mensagemPerdeu
+        else
+            if (contaNaoRevelados 0 matrizUsuarioReveladaRecursivamente == bombas) then Textos.mensagemVenceu else entradas linhas colunas bombas mtzInterna matrizUsuario 
+    else do
+        putStrLn "outras jogadas."
 
 inicia_jogo :: IO()
 inicia_jogo = do
