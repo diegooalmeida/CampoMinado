@@ -71,7 +71,5 @@ menuInstrucoes = do
     putStrLn "|-----------------------------------------------------------------------------|" 
     putStrLn "|                          Instruçoes do Jogo                                 |" 
     putStrLn "|                                                                             |" 
-    putStrLn "|              R - Revela, exemplo: R A 2 - Revela posição A2.                |" 
-    putStrLn "|              F - Flag, exemplo: F A 2 - Insere uma flag na posição A2.      |" 
-    putStrLn "|              ? - Interrogação: ? A 2 - Insere uma ? na posição A2.          |" 
+    putStrLn "|              Revela, exemplo: 1 2 - Revela posição (1,2).                   |" 
     putStrLn "|-----------------------------------------------------------------------------|" 
