@@ -9,9 +9,23 @@ menuInstrucoes
 )where
 
 
+<<<<<<< HEAD
+=======
+mensagemCreditos::String
+mensagemCreditos = "\n|-----------------------------------------------------------------------------|\n
+                    |                                PLP 2019.2                                     |\n
+                    |                           Everton L. G. Alves                                 |\n
+                    |                                  Grupo:                                       |\n
+                    |                           Diego Ribeiro Almeida                               |\n
+                    |                            Iago Tito Oliveira                                 |\n
+                    |                         Paulo Mateus Alves Moreira                            |\n
+                    |                         Raiany Rufino Costa da Paz                            |\n
+                    |-------------------------------------------------------------------------------|\n" 
+>>>>>>> 986c445cc654724658d6756061fb744c094c9744
 
 
 
+<<<<<<< HEAD
 mensagemBemVindo :: String 
 mensagemBemVindo = do
 	putStr "██████╗ ███████╗███╗   ███╗    ██╗   ██╗██╗███╗   ██╗██████╗  ██████╗ " 
@@ -20,6 +34,15 @@ mensagemBemVindo = do
 	putStr "██╔══██╗██╔══╝  ██║╚██╔╝██║    ╚██╗ ██╔╝██║██║╚██╗██║██║  ██║██║   ██║" 
 	putStr "██████╔╝███████╗██║ ╚═╝ ██║     ╚████╔╝ ██║██║ ╚████║██████╔╝╚██████╔╝" 
     putStr "╚═════╝ ╚══════╝╚═╝     ╚═╝      ╚═══╝  ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝ " 
+=======
+instrucoesJogo::String
+instrucoesJogo = "\n|-----------------------------------------------------------------------------|\n
+                    |                           Instruções do Jogo                                |\n
+                    |                R - Revela, exemplo: R A 2 - Revela posição A2.              |\n
+                    |                F - Flag, exemplo: F A 2 - Insere uma flag na posição A2.    |\n
+                    |                ? - Interrogação: ? A 2 - Insere uma ? na posição A2.        |\n
+                    |-----------------------------------------------------------------------------|\n" 
+>>>>>>> 986c445cc654724658d6756061fb744c094c9744
 
     
 mensagemPerdeu :: String 
