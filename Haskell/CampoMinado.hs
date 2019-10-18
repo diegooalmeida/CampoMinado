@@ -1,4 +1,4 @@
-import STextos
+import Textos
 import System.Random
 --import Auxiliar
 
@@ -35,14 +35,15 @@ pegaValoresDaMatriz linha linhas colunas matriz
 imprimeMatriz :: Int -> Int -> Matriz -> IO()
 imprimeMatriz linhas colunas matriz = putStrLn (pegaValoresDaMatriz 1 linhas colunas matriz)
 
-inicia_jogo :: Int -> Int -> Int -> Int -> Matriz -> IO()
-inicia_jogo linhas colunas bombas semente campo_minado = do
-    let posicoes_aleatorias = Auxiliar.geraPosicoesAleatorias linhas colunas bombas semente []
+--inicia_jogo :: Int -> Int -> Int -> Int -> Matriz -> IO()
+--inicia_jogo linhas colunas bombas semente campo_minado = do
+--    let posicoes_aleatorias = Auxiliar.geraPosicoesAleatorias linhas colunas bombas semente []
 
 
 main :: IO()
 main = do
-    putStrLn (STextos.textoInicio)
+    Textos.mensagemBemVindo
+    menu
 
     entrada <- getLine
     let info = words entrada
@@ -64,4 +65,23 @@ main = do
 
     imprimeMatriz linhas colunas campo_minado
 
-    inicia_jogo linhas colunas bombas semente campo_minado
+    --inicia_jogo linhas colunas bombas semente campo_minado
+
+menu :: IO()
+menu = do
+    Textos.mainMenu
+    escolha <- getLine
+    
+    if(escolha == "1") then do
+        putStrLn "inicia_jogo"
+    else if(escolha == "2") then do
+        Textos.menuCreditos
+        menu
+    else if(escolha == "3") then do
+        Textos.menuInstrucoes
+        menu
+    else if(escolha == "4") then do 
+        return()
+    else
+        putStrLn "Opção inválida"
+        
