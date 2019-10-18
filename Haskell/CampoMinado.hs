@@ -1,5 +1,5 @@
 import STextos
-import SPreencheMatrizCM
+import Auxiliar
 
 type Coordenadas = (Int, Int)
 type Valor = Int
@@ -34,6 +34,10 @@ pegaValoresDaMatriz linha linhas colunas matriz
 imprimeMatriz :: Int -> Int -> Matriz -> IO()
 imprimeMatriz linhas colunas matriz = putStrLn (pegaValoresDaMatriz 1 linhas colunas matriz)
 
+inicia_jogo :: Int -> Int -> Int -> Matriz -> IO()
+inicia_jogo linhas colunas bombas campo_minado = do
+    let posicoes_aleatorias = Auxiliar.geraPosicoesAleatorias linhas colunas bombas []
+
 
 main :: IO()
 main = do
@@ -54,3 +58,7 @@ main = do
     let campo_minado = criaMatriz linhas colunas 0
 
     imprimeMatriz linhas colunas campo_minado
+
+    inicia_jogo linhas colunas bombas campo_minado
+
+    print (Auxiliar.geraPosicoesAleatorias linhas colunas bombas [])
