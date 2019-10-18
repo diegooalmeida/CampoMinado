@@ -11,9 +11,9 @@ import System.Random
 geraNumeroAleatorio :: Int -> Int -> Int
 geraNumeroAleatorio num semente = 
     if (semente `mod` 2 == 0) then
-        ((semente * 20) `mod` num)
+        (((semente * 20) `mod` num) + 1)
     else
-        ((semente * 43) `mod` num)
+        (((semente * 43) `mod` num) + 1)
 
 geraTuplaAleatoria :: Int -> Int -> Int -> Int -> [(Int, Int)] -> (Int, Int)
 geraTuplaAleatoria linhas colunas semente1 semente2 lista

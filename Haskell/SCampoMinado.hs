@@ -81,11 +81,19 @@ modificaTodaMatriz (((a,b), c):mtz_CM) mtz mtz_usuario = modificaTodaMatriz mtz_
 
 --Função que recebe o valor das coordenadas x e y e passa para a função modifica 
 modificaMatriz:: Int -> Int -> Matriz -> Matriz -> Matriz
-modificaMatriz x y (((a,b), c):mtz) mtz_usuario = if (x == a && y == b) then ( (modifica x y c mtz_usuario [])) else modificaMatriz x y mtz mtz_usuario
+modificaMatriz x y (((a,b), c):mtz) mtz_usuario =
+	if (x == a && y == b) then
+		((modifica x y c mtz_usuario []))
+	else
+		modificaMatriz x y mtz mtz_usuario
 
 --Função que modifica a matriz do usuário de acordo com as coordenadas recebidas
 modifica:: Int -> Int -> Int -> Matriz -> Matriz -> Matriz 
-modifica x y z (((a,b), c):mtz_usuario) anterior = if (x == a && y == b) then anterior++(([((x, y), z)]++mtz_usuario)) else modifica x y z mtz_usuario (anterior++[((a,b), c)])
+modifica x y z (((a,b), c):mtz_usuario) anterior =
+	if (x == a && y == b) then
+		anterior++(([((x, y), z)]++mtz_usuario))
+	else
+		modifica x y z mtz_usuario (anterior++[((a,b), c)])
  
 --Função que recebe o valor da coordenada y e imprime a matriz resultante para o usuário, após a chamada de algumas funções
 inputy::Matriz -> Matriz -> Int -> IO()
@@ -93,11 +101,12 @@ inputy mtz_CM mtz_Im x = do
 	putStr "Digite o eixo y: "
 	y <- getLine
 	let num = read y :: Int
-    	if (num<1 || num > 9) then do
-             putStrLn "Numero invalido!\n"
-             inputy mtz_CM mtz_Im x
-    	else do
-		let matriz_usuario = if(verificaSeTemBomba (x, num) mtz_CM) then modificaTodaMatriz mtz_CM mtz_CM mtz_Im else modificaMatriz x num mtz_CM mtz_Im 
+		let matriz_usuario =
+			if(verificaSeTemBomba (x, num) mtz_CM) then
+				modificaTodaMatriz mtz_CM mtz_CM mtz_Im
+			else
+				modificaMatriz x num mtz_CM mtz_Im 
+
 		imprimeLista (reverse matriz_usuario)
 		if(verificaMtz matriz_usuario) then putStrLn(STextos.textoPerdeu) else whileMain mtz_CM matriz_usuario 
 
@@ -124,10 +133,10 @@ recebeAleatorio = do
              putStrLn "Numero invalido!\n"
              recebeAleatorio
     else do
-	putStrLn " "
-	let campo_minado = (criaMatriz 9 9 0)
-	let valoresAleatorios = SPreencheMatrizCM.getRandomInt 0 num 
-	--Gera uma Matriz com bombas nas posições fornecidas por valoresAleatorios
+	putStrLn " "esultado = whileMain prep_campo_minado m
+	let campo_minado = (cresultado = whileMain prep_campo_minado miaMatriz 9 9 0)
+	let valoresAleatorios esultado = whileMain prep_campo_minado m= SPreencheMatrizCM.getRandomInt 0 num 
+	--Gera uma Matriz com esultado = whileMain prep_campo_minado mbombas nas posições fornecidas por valoresAleatorios
 	let campo_bomba = forBomba 8 valoresAleatorios campo_minado
 	--Cria uma nova Matriz com os adjcentes das bombas somados +1
 	let prep_campo_minado = minasAdjacentes campo_bomba campo_bomba
@@ -136,7 +145,11 @@ recebeAleatorio = do
 	inputx prep_campo_minado mtz_Impressa
 
 whileMain:: Matriz -> Matriz -> IO()
-whileMain mtz mtz_usuario = if(verificaMtz mtz_usuario) then do putStrLn(STextos.textoGanhou) else do inputx mtz mtz_usuario
+whileMain mtz mtz_usuario =
+	if(verificaMtz mtz_usuario) then
+		do putStrLn(STextos.textoGanhou)
+	else
+		do inputx mtz mtz_usuario
 
 verificaMtz:: Matriz -> Bool
 verificaMtz [] = True 
