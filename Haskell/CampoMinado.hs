@@ -1,5 +1,6 @@
 import Textos
 import System.Random
+import System.Exit
 --import Auxiliar
 
 type Coordenadas = (Int, Int)
@@ -81,7 +82,7 @@ menu = do
         Textos.menuInstrucoes
         menu
     else if(escolha == "4") then do 
-        return()
+        exitSuccess
     else
         putStrLn "Opção inválida"
         
