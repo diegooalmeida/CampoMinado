@@ -2,25 +2,16 @@ import System.Random
 import Data.Typeable
 import Auxiliar
 
+type Coordenadas = (Int, Int)
+type Valor = Int
+type Elem = (Coordenadas,Valor)
+type Matriz = [Elem]
+
 main :: IO()
 main = do
     
-    g <- newStdGen
-    let (a,b) = randomR (1,999999 :: Int) g
-    let semente1 = a
-
-    h <- newStdGen
-    let (c,d) = randomR (1,999999 :: Int) h
-    let semente2 = c
-
-    print (semente1)
-    print (semente2)
-
-    print (Auxiliar.geraNumeroAleatorio 9 semente1)
-    print (Auxiliar.geraNumeroAleatorio 9 semente2)
-
-    
-    let tuplas = Auxiliar.geraPosicoesAleatorias 10 10 6 semente1 semente2 []
-
-    print (tuplas)
+    let m = [((1,1),0), ((1,2),2), ((4,5),10)]
+    let x = 1
+    let y= 2
+    print 
 

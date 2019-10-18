@@ -37,11 +37,11 @@ somaAdjacentes 9 9 mtz = inverte 9 8 (inverte 8 9 (inverte 8 8 mtz [])[])[]
 somaAdjacentes x 9 mtz = inverte x 8 (inverte (x-1) 9 (inverte (x-1) 8 (inverte (x+1) 9 (inverte (x+1) 8 mtz [])[])[])[])[]
 somaAdjacentes x y mtz = inverte x (y-1) (inverte x (y+1) (inverte (x-1) y (inverte (x-1) (y+1) (inverte (x-1) (y-1) (inverte (x+1) y (inverte (x+1) (y+1) (inverte (x+1) (y-1) mtz [])[])[])[])[])[])[])[]
 
-
-verificaSePerdeu:: Matriz -> Bool
-verificaSePerdeu [] = True 
-verificaSePerdeu (((x, y), z):mtzUsuario) = if(z == -2) then False else verificaSePerdeu mtzUsuario
-
+--
+--verificaSeVenceu:: Matriz -> Bool
+--verificaSeVenceu [] = True 
+--verificaSeVenceu (((x, y), z):mtzUsuario) = if(z == -2) then False else verificaSePerdeu mtzUsuario
+--
 
 verificaPosicao :: (Int, Int) -> Matriz -> Bool
 verificaPosicao tupla [] = False
@@ -109,16 +109,64 @@ insereBombas :: [(Int, Int)] -> Matriz -> Matriz
 insereBombas [] mtz = mtz
 insereBombas ((x, y): mtzTail) mtz =  insereBombas mtzTail (insereBomba x y mtz [])         
 
-entradas :: Int -> Int -> Matriz -> Matriz -> IO()
-entradas linhas colunas mtzInterna mtzUsuario = do
+contaNaoRevelados :: Int -> Matriz -> Int
+contaNaoRevelados num [] = num
+contaNaoRevelados num (((x, y), v) : mtz) = if (v == -2) then (contaNaoRevelados (num+1) mtz) else (contaNaoRevelados (num) mtz)
+
+foiRevelado :: Int -> Int -> Matriz -> Bool
+foiRevelado x y (((a,b),v):mtzTail) = if (a==x && b==y) then (v/=(-2)) else (foiRevelado x y mtzTail)
+
+arredoresRevelados :: Int -> Int -> Int -> Int -> Matriz -> Bool
+arredoresRevelados x y linhas colunas mtzUsuario
+    | (x == 1 && y == 1) = (foiRevelado (x) (y+1) mtzUsuario) && (foiRevelado (x+1) (y) mtzUsuario)
+    | (x == 1 && y == colunas) = (foiRevelado (x) (y-1) mtzUsuario) && (foiRevelado (x+1) (y) mtzUsuario)
+    | (x == linhas && y == colunas) = (foiRevelado (x) (y-1) mtzUsuario) && (foiRevelado (x-1) (y) mtzUsuario)
+    | (x == linhas && y == 1) = (foiRevelado (x) (y+1) mtzUsuario) && (foiRevelado (x-1) (y) mtzUsuario)
+    | (x == 1 && y > 1 && y < colunas) = (foiRevelado (x) (y+1) mtzUsuario) && (foiRevelado (x) (y-1) mtzUsuario) && (foiRevelado (x+1) (y) mtzUsuario)
+    | (x > 1 && x < linhas && y == colunas) = (foiRevelado (x-1) (y) mtzUsuario) && (foiRevelado (x+1) (y) mtzUsuario) && (foiRevelado (x) (y-1) mtzUsuario)
+    | (x == linhas && y > 1 && y < colunas) = (foiRevelado (x-1) (y) mtzUsuario) && (foiRevelado (x) (y-1) mtzUsuario) && (foiRevelado (x) (y+1) mtzUsuario)
+    | (x > 1 && x < linhas && y == 1) = (foiRevelado (x) (y+1) mtzUsuario) && (foiRevelado (x-1) (y) mtzUsuario) && (foiRevelado (x+1) (y) mtzUsuario)
+    | otherwise = (foiRevelado (x-1) (y) mtzUsuario) && (foiRevelado (x) (y+1) mtzUsuario) && (foiRevelado (x+1) (y) mtzUsuario) && (foiRevelado (x) (y-1) mtzUsuario)
+
+revelaEmCruz :: Int -> Int -> Int -> Int -> Matriz -> Matriz -> Matriz
+revelaEmCruz x y linhas colunas mtzUsuario mtzInterna
+    | (x == 1 &&  y == 1) = modificaMatriz (x+1) y mtzInterna (modificaMatriz x (y+1) mtzInterna mtzUsuario)
+    | (x == 1 && y == colunas) = modificaMatriz (x+1) y mtzInterna (modificaMatriz x (y-1) mtzInterna mtzUsuario)
+    | (x == linhas && y == colunas) = modificaMatriz (x-1) y mtzInterna (modificaMatriz x (y-1) mtzInterna mtzUsuario)
+    | (x == linhas && y==1) = modificaMatriz (x-1) y mtzInterna (modificaMatriz x (y+1) mtzInterna mtzUsuario)
+    | (x==1 && y > 1 && y < colunas) = modificaMatriz (x+1) y mtzInterna (modificaMatriz x (y-1) mtzInterna (modificaMatriz x (y+1) mtzInterna mtzUsuario))
+    | (x>1 && x < linhas && y==colunas) = modificaMatriz (x-1) y mtzInterna (modificaMatriz (x+1) (y) mtzInterna (modificaMatriz x (y-1) mtzInterna mtzUsuario))
+    | (x== linhas && y > 1 && y < colunas) = modificaMatriz (x-1) y mtzInterna (modificaMatriz x (y-1) mtzInterna (modificaMatriz x (y+1) mtzInterna mtzUsuario))
+    | (x>1 && x<linhas && y==1) = modificaMatriz x (y+1) mtzInterna (modificaMatriz (x-1) y mtzInterna (modificaMatriz (x+1) y mtzInterna mtzUsuario))
+    | otherwise = modificaMatriz (x-1) y mtzInterna (modificaMatriz (x) (y+1) mtzInterna (modificaMatriz (x+1) (y) mtzInterna (modificaMatriz x (y-1) mtzInterna mtzUsuario)))
+
+saiRevelando :: Int -> Int -> Matriz -> Matriz -> Matriz -> Matriz
+saiRevelando linhas colunas [] mtzUsuario mtzInterna = mtzUsuario
+saiRevelando linhas colunas (((x, y), z):mtzUsuarioTail) mtzUsuario mtzInterna = 
+    if (z /= 0) then
+        saiRevelando linhas colunas mtzUsuarioTail mtzUsuario mtzInterna
+    else 
+        if (arredoresRevelados x y linhas colunas mtzUsuario) then
+            saiRevelando linhas colunas mtzUsuarioTail mtzUsuario mtzInterna
+        else
+            saiRevelando linhas colunas (revelaEmCruz x y linhas colunas mtzUsuario mtzInterna) (revelaEmCruz x y linhas colunas mtzUsuario mtzInterna) mtzInterna
+
+entradas :: Int -> Int -> Int -> Matriz -> Matriz -> IO()
+entradas linhas colunas bombas mtzInterna mtzUsuario = do
     entrada <- getLine
     let info = words entrada
     let x = read (info !! 0) :: Int
     let y = read (info !! 1) :: Int
 
     let matrizUsuario = if(verificaPosicao (x, y) mtzInterna) then revelaMatriz mtzInterna mtzInterna mtzUsuario else modificaMatriz x y mtzInterna mtzUsuario
-    imprimeMatriz linhas colunas (matrizUsuario)
-    if(verificaSePerdeu matrizUsuario) then Textos.mensagemPerdeu else entradas linhas colunas mtzInterna matrizUsuario 
+    
+    let matrizUsuarioReveladaRecursivamente = saiRevelando linhas colunas matrizUsuario matrizUsuario mtzInterna
+
+    imprimeMatriz linhas colunas (matrizUsuarioReveladaRecursivamente)
+    if(verificaPosicao (x, y) mtzInterna) then
+        Textos.mensagemPerdeu
+    else
+        if (contaNaoRevelados (-1) mtzUsuario == bombas) then Textos.mensagemVenceu else entradas linhas colunas bombas mtzInterna matrizUsuario 
 
 
 inicia_jogo :: IO()
@@ -153,7 +201,7 @@ inicia_jogo = do
 
     let matriz_impressa = (criaMatriz linhas colunas (-2))
 
-    entradas linhas colunas prepara_campo_bombado matriz_impressa
+    entradas linhas colunas bombas prepara_campo_bombado matriz_impressa
 
 main :: IO()
 main = do
