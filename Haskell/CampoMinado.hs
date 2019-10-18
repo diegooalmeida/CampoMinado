@@ -83,7 +83,10 @@ pegaValoresDaLinha linha coluna (((x, y), v):mtz)
 -- O nome diz a que veio
 converteListaIntParaString :: [Int] -> String
 converteListaIntParaString [] = ""
-converteListaIntParaString (h:t) = show h ++ " " ++ converteListaIntParaString t
+converteListaIntParaString (h:t) 
+    | h == -2 = "+ " ++ converteListaIntParaString t
+    | h == -1 = "B " ++ converteListaIntParaString t
+    | otherwise = show h ++ " " ++ converteListaIntParaString t
 
 -- Cria uma representacao em String da matriz passada como parametro.
 -- Requer tambem as dimensoes da matriz
@@ -167,7 +170,7 @@ entradas linhas colunas bombas mtzInterna mtzUsuario = do
     if(verificaPosicao (x, y) mtzInterna) then
         Textos.mensagemPerdeu
     else
-        if (contaNaoRevelados (-1) mtzUsuario == bombas) then Textos.mensagemVenceu else entradas linhas colunas bombas mtzInterna matrizUsuario 
+        if (contaNaoRevelados 0 matrizUsuarioReveladaRecursivamente == bombas) then Textos.mensagemVenceu else entradas linhas colunas bombas mtzInterna matrizUsuario 
 
 
 inicia_jogo :: IO()
