@@ -11,7 +11,7 @@ jogar(Linhas,Colunas,NBombas) :-
 Bem vindo ao campo minado!
 Regras:
 : R X Y  Revela, exemplo: R 1 2 - Revela posição 1(linha) 2(coluna).
-: ? X Y  Interrogação: ? 1 2 - Insere uma ? na posição 1(linha) 2(coluna).
+: ? X Y  Interrogação, exemplo: ? 1 2 - Insere uma ? na posição 1(linha) 2(coluna).
 : F X Y  Flag, exemplo: B 1 2 - Insere uma flag na posicao 1(linha) 2(coluna). 
 
 Qualquer outra coisa para sair do jogo
